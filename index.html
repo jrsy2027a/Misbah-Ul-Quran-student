@@ -1,0 +1,2062 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>Misbah-ul-Quran</title>
+
+<!-- ================= PWA ================= -->
+<meta name="theme-color" content="#0E7C66" />
+<meta name="description" content="Misbah-ul-Quran — learn the Qaida the fun way." />
+<link rel="manifest" href="manifest.webmanifest" />
+<link rel="apple-touch-icon" href="apple-touch-icon.png" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Misbah" />
+
+<!-- ================= FONTS ================= -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Scheherazade+New:wght@400;700&family=Noto+Nastaliq+Urdu:wght@500;700&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   CONFIG NOTE: All learning content lives in QAIDA_CONFIG (JS).
+   This CSS section only handles LOOK. Sections below:
+   TOKENS / BASE / MASCOT / SCREENS / CARDS / BUTTONS / ANIM
+   ============================================================ */
+
+/* ---------- TOKENS ---------- */
+:root{
+  --cream:#FFF7E9;
+  --cream-2:#FFEFD4;
+  --emerald:#0E7C66;
+  --emerald-d:#0A5C4C;
+  --emerald-l:#1AA184;
+  --gold:#E7A928;
+  --gold-l:#F7CE5B;
+  --coral:#FF6F61;
+  --ink:#25382F;
+  --ink-soft:#5A6B62;
+  --white:#ffffff;
+  --shadow:0 12px 28px rgba(14,124,102,.16);
+  --shadow-sm:0 6px 16px rgba(14,124,102,.14);
+  --radius:26px;
+}
+
+/* ---------- BASE ---------- */
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{margin:0;padding:0;height:100%;}
+body{
+  font-family:'Baloo 2',system-ui,sans-serif;
+  color:var(--ink);
+  background:
+     radial-gradient(circle at 15% 12%, #FFE6B8 0, transparent 42%),
+     radial-gradient(circle at 88% 8%, #CFEDE3 0, transparent 40%),
+     radial-gradient(circle at 80% 92%, #FFDCC9 0, transparent 45%),
+     var(--cream);
+  overflow-x:hidden;
+  -webkit-user-select:none;user-select:none;
+}
+.app{max-width:520px;margin:0 auto;min-height:100dvh;position:relative;overflow:hidden;}
+.arabic{font-family:'Scheherazade New',serif;direction:rtl;}
+.urdu{font-family:'Noto Nastaliq Urdu',serif;direction:rtl;line-height:2.1;}
+
+/* ---------- SCREENS ---------- */
+.screen{
+  position:absolute;inset:0;padding:22px 20px 28px;
+  display:none;flex-direction:column;
+  opacity:0;transform:translateY(14px);
+  transition:opacity .35s ease, transform .35s ease;
+  overflow-y:auto;
+}
+.screen.active{display:flex;opacity:1;transform:none;}
+
+/* topbar */
+.topbar{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+.topbar .who{display:flex;align-items:center;gap:10px;font-weight:700;}
+.avatar-chip{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;
+  font-size:24px;background:var(--white);box-shadow:var(--shadow-sm);}
+.iconbtn{margin-inline-start:auto;border:none;background:var(--white);
+  width:46px;height:46px;border-radius:16px;font-size:20px;box-shadow:var(--shadow-sm);
+  cursor:pointer;color:var(--emerald);font-weight:700;}
+.iconbtn:active{transform:scale(.92);}
+
+/* ---------- BUTTONS ---------- */
+.btn{
+  border:none;cursor:pointer;font-family:inherit;font-weight:800;font-size:1.15rem;
+  padding:16px 22px;border-radius:20px;color:#fff;background:var(--emerald);
+  box-shadow:0 8px 0 var(--emerald-d);transition:transform .08s, box-shadow .08s;
+}
+.btn:active{transform:translateY(5px);box-shadow:0 3px 0 var(--emerald-d);}
+.btn.gold{background:var(--gold);box-shadow:0 8px 0 #B47F12;color:#4a3510;}
+.btn.coral{background:var(--coral);box-shadow:0 8px 0 #C24A3E;}
+.btn.ghost{background:var(--white);color:var(--emerald);box-shadow:0 6px 0 #e6dcc4;}
+.btn.block{width:100%;}
+.btn:disabled{opacity:.45;box-shadow:none;transform:none;cursor:not-allowed;}
+.btn-row{display:flex;gap:12px;}
+
+/* ---------- MASCOT (Noori the crescent) ---------- */
+.mascot{width:150px;height:150px;filter:drop-shadow(0 10px 14px rgba(231,169,40,.35));}
+.mascot.bob{animation:bob 2.4s ease-in-out infinite;}
+.mascot.cheer{animation:cheer .7s ease;}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-12px) rotate(3deg)}}
+@keyframes cheer{0%{transform:scale(1)}30%{transform:scale(1.18) rotate(8deg)}60%{transform:scale(.95) rotate(-6deg)}100%{transform:scale(1)}}
+
+/* ============ SPLASH ============ */
+#splash{align-items:center;justify-content:center;text-align:center;gap:6px;}
+.brand{font-size:2.5rem;font-weight:800;color:var(--emerald);letter-spacing:.5px;}
+.brand .noor{color:var(--gold);}
+.brand-ar{font-size:2.2rem;color:var(--emerald-d);margin-top:-6px;}
+.tag{color:var(--ink-soft);font-weight:600;margin:4px 0 26px;}
+
+/* ============ PROFILE SELECT ============ */
+.center-title{font-size:1.5rem;font-weight:800;color:var(--emerald);text-align:center;margin:6px 0 4px;}
+.sub{color:var(--ink-soft);text-align:center;font-weight:600;margin-bottom:18px;}
+.profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.pcard{
+  background:var(--white);border-radius:var(--radius);padding:18px 10px;text-align:center;
+  box-shadow:var(--shadow);cursor:pointer;border:3px solid transparent;transition:transform .1s;
+  position:relative;
+}
+.pcard:active{transform:scale(.96);}
+.pcard .pav{font-size:44px;}
+.pcard .pname{font-weight:800;margin-top:6px;color:var(--ink);}
+.pcard .page{font-size:.8rem;color:var(--ink-soft);font-weight:600;}
+.pcard.add{display:grid;place-items:center;background:transparent;border:3px dashed #E2B45C;color:var(--gold);min-height:120px;}
+.pcard.add .plus{font-size:40px;font-weight:800;}
+.mini-edit{position:absolute;top:8px;inset-inline-end:8px;background:var(--cream-2);color:var(--emerald);
+  border:none;width:30px;height:30px;border-radius:50%;font-weight:800;font-size:15px;cursor:pointer;
+  box-shadow:var(--shadow-sm);display:grid;place-items:center;}
+.mini-edit:active{transform:scale(.9);}
+
+/* ============ FORM ============ */
+.field{margin-bottom:14px;}
+.field label{display:block;font-weight:700;margin-bottom:6px;color:var(--emerald-d);}
+.field input, .field select{
+  width:100%;padding:14px 16px;border-radius:16px;border:2px solid #EAD9B4;background:var(--white);
+  font-family:inherit;font-size:1rem;font-weight:600;color:var(--ink);
+}
+.avatar-pick{display:flex;flex-wrap:wrap;gap:8px;}
+.avatar-pick span{
+  width:46px;height:46px;border-radius:14px;background:var(--white);display:grid;place-items:center;
+  font-size:24px;cursor:pointer;box-shadow:var(--shadow-sm);border:3px solid transparent;
+}
+.avatar-pick span.sel{border-color:var(--gold);transform:scale(1.05);}
+.avatar-pick span.upload{color:var(--emerald);font-size:22px;background:var(--cream-2);}
+.avatar-pick span img{width:100%;height:100%;object-fit:cover;border-radius:11px;}
+.avatar-chip img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+.pcard .pav img{width:60px;height:60px;object-fit:cover;border-radius:50%;}
+.pcard .pname{word-break:break-word;line-height:1.15;}
+.who{flex-wrap:wrap;}
+#menuName{word-break:break-word;}
+.greet-name{padding:0 12px;line-height:1.25;word-break:break-word;}
+
+/* ============ GREETING ============ */
+#greet{align-items:center;justify-content:center;text-align:center;gap:4px;}
+.greet-ar{font-size:2.1rem;color:var(--emerald);font-weight:700;margin-top:10px;}
+.greet-name{font-size:1.6rem;font-weight:800;color:var(--gold);}
+
+/* ============ MAIN MENU ============ */
+.menu-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:8px;}
+.tile{
+  background:var(--white);border-radius:var(--radius);padding:20px 12px;text-align:center;
+  box-shadow:var(--shadow);cursor:pointer;position:relative;transition:transform .1s;
+  min-height:130px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
+}
+.tile:active{transform:scale(.96);}
+.tile .ti{font-size:42px;}
+.tile .tt{font-weight:800;color:var(--ink);}
+.tile.locked{opacity:.6;filter:grayscale(.4);cursor:default;}
+.tile.locked:active{transform:none;}
+.tile .soon{position:absolute;top:10px;inset-inline-end:10px;background:var(--cream-2);color:var(--ink-soft);
+  font-size:.65rem;font-weight:800;padding:3px 8px;border-radius:20px;}
+.tile.qaida{grid-column:1 / -1;background:linear-gradient(135deg,var(--emerald),var(--emerald-l));color:#fff;}
+.tile.qaida .tt{color:#fff;}
+.tile.qaida .ti{font-size:50px;}
+
+/* ============ QAIDA LESSON ============ */
+.lesson-wrap{flex:1;display:flex;flex-direction:column;min-height:0;}
+.progress-dots{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin:6px 0 12px;}
+.dot{width:9px;height:9px;border-radius:50%;background:#E6D8B8;}
+.dot.done{background:var(--emerald-l);}
+.dot.now{background:var(--gold);transform:scale(1.35);}
+
+.stage{
+  flex:1;min-height:0;background:var(--white);border-radius:32px;box-shadow:var(--shadow);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:20px 18px;text-align:center;gap:8px;position:relative;overflow:hidden;
+}
+.stage .kicker{font-weight:700;color:var(--ink-soft);}
+.big-letter{font-family:'Scheherazade New',serif;font-size:7.6rem;line-height:1.3;color:var(--emerald);
+  direction:rtl;margin:0;padding-bottom:6px;}
+.big-phrase{font-family:'Scheherazade New',serif;font-size:2.9rem;color:var(--emerald);direction:rtl;
+  line-height:1.7;}
+.letter-name{font-size:1.5rem;font-weight:800;color:var(--gold);margin-top:2px;}
+.mnemonic{display:flex;align-items:center;gap:10px;justify-content:center;background:var(--cream);
+  padding:12px 16px;border-radius:18px;max-width:90%;}
+.mnemonic .em{font-size:34px;}
+.mnemonic .mtext{font-weight:700;color:var(--ink);}
+.mnemonic .mtext.urdu{font-size:1.15rem;}
+.tap-hint{color:var(--ink-soft);font-weight:600;font-size:.85rem;}
+.speaker{position:absolute;top:14px;inset-inline-end:14px;background:var(--cream);border:none;
+  width:48px;height:48px;border-radius:16px;font-size:22px;cursor:pointer;color:var(--emerald);}
+.speaker:active{transform:scale(.9);}
+
+.nav-row{display:flex;gap:12px;margin-top:12px;padding-bottom:4px;}
+.nav-row .btn{flex:1;padding-inline:12px;}
+#nextBtn{animation:nudge 1.9s ease-in-out infinite;}
+@keyframes nudge{0%,88%,100%{transform:none}92%{transform:translateY(-4px)}}
+
+/* ============ REWARD ============ */
+#reward{align-items:center;justify-content:center;text-align:center;gap:8px;}
+.reward-title{font-size:1.9rem;font-weight:800;color:var(--emerald);}
+.reward-star{font-size:70px;animation:cheer .8s ease infinite alternate;}
+
+/* ---------- falling bits ---------- */
+.fall{position:fixed;top:-40px;font-size:26px;pointer-events:none;z-index:60;animation:fall linear forwards;}
+@keyframes fall{to{transform:translateY(110vh) rotate(360deg);opacity:.15;}}
+
+/* voice note */
+.voice-note{background:#fff3d6;color:#8a6d1e;border-radius:14px;padding:10px 14px;font-weight:600;
+  font-size:.85rem;margin-top:12px;display:none;}
+.voice-note.show{display:block;}
+
+/* confirm modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(18,42,32,.55);display:none;
+  align-items:center;justify-content:center;z-index:200;padding:24px;}
+.modal-overlay.show{display:flex;}
+.modal-card{background:#fff;border-radius:28px;padding:26px 22px;text-align:center;
+  max-width:340px;width:100%;box-shadow:var(--shadow);animation:pop .25s ease;}
+@keyframes pop{from{transform:scale(.85);opacity:0}to{transform:scale(1);opacity:1}}
+.modal-emoji{font-size:46px;}
+.modal-msg{font-weight:800;color:var(--ink);margin:10px 0 20px;font-size:1.1rem;line-height:1.5;white-space:pre-line;}
+.modal-btns{display:flex;gap:12px;}
+.modal-btns .btn{flex:1;font-size:1.05rem;padding:14px;}
+
+/* ===== Phase 2: Hub / Harakat / Rule / Quiz ===== */
+.hub-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:8px;}
+.hub-card{background:var(--white);border-radius:var(--radius);padding:22px 12px;text-align:center;
+  box-shadow:var(--shadow);cursor:pointer;position:relative;min-height:120px;display:flex;
+  flex-direction:column;align-items:center;justify-content:center;gap:6px;transition:transform .1s;}
+.hub-card:active{transform:scale(.96);}
+.hub-card.done{background:linear-gradient(135deg,#E6F3EF,#fff);}
+.hub-ic{font-size:38px;line-height:1;}
+.hub-tt{font-weight:800;color:var(--ink);font-size:.95rem;line-height:1.2;}
+.hub-no{position:absolute;top:10px;inset-inline-start:13px;font-weight:800;color:var(--gold);}
+.hub-done{position:absolute;top:9px;inset-inline-end:11px;background:var(--emerald-l);color:#fff;
+  width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:.9rem;}
+.hub-card.quiz{grid-column:1 / -1;background:linear-gradient(135deg,var(--gold),var(--gold-l));min-height:96px;}
+.hub-card.quiz .hub-tt{color:#4a3510;}
+.hub-card.quiz.done{background:linear-gradient(135deg,#E6F3EF,#fff);}
+
+.rule-text{font-size:1.55rem;font-weight:800;color:var(--emerald);line-height:1.7;max-width:94%;}
+.rule-text.urdu{font-family:'Noto Nastaliq Urdu',serif;font-size:1.4rem;line-height:2.3;}
+
+.harakat-row{display:flex;gap:12px;justify-content:center;margin:6px 0;}
+.hk{background:var(--cream);border-radius:18px;padding:14px 10px;cursor:pointer;min-width:80px;transition:transform .08s;}
+.hk:active{transform:scale(.93);}
+.hk-l{font-family:'Scheherazade New',serif;font-size:3.6rem;color:var(--emerald);direction:rtl;line-height:1.25;}
+.hk-s{font-weight:800;color:var(--gold);margin-top:2px;font-size:1.1rem;}
+
+.quiz-box{background:var(--white);border-radius:28px;box-shadow:var(--shadow);padding:24px 18px;
+  margin-top:10px;text-align:center;}
+.q-text{font-size:1.2rem;font-weight:800;color:var(--ink);margin-bottom:8px;}
+.q-text.urdu{font-family:'Noto Nastaliq Urdu',serif;line-height:2.1;}
+.q-show{font-family:'Scheherazade New',serif;font-size:5rem;color:var(--emerald);direction:rtl;
+  margin:4px 0 16px;cursor:pointer;}
+.q-options{display:flex;flex-direction:column;gap:11px;}
+.q-opt{border:2px solid #EAD9B4;background:var(--white);border-radius:16px;padding:14px;
+  font-family:inherit;font-weight:800;font-size:1.1rem;color:var(--ink);cursor:pointer;transition:transform .08s;}
+.q-opt:active{transform:scale(.98);}
+.q-opt.correct{background:#E6F3EF;border-color:var(--emerald-l);color:var(--emerald);}
+.q-opt.wrong{background:#FFE7E3;border-color:var(--coral);color:#C24A3E;}
+.q-opt.locked{cursor:default;}
+
+/* ===== Game: Huroof Hunt ===== */
+.game-hdr{display:flex;justify-content:space-between;gap:8px;margin-bottom:12px;}
+.game-stat{background:var(--white);border-radius:14px;padding:8px 12px;font-weight:800;
+  box-shadow:var(--shadow-sm);font-size:.85rem;color:var(--emerald);}
+.game-prompt{background:linear-gradient(135deg,var(--emerald),var(--emerald-l));color:#fff;
+  border-radius:22px;padding:16px;text-align:center;box-shadow:var(--shadow);margin-bottom:16px;cursor:pointer;}
+.game-prompt .gp-label{font-weight:700;opacity:.9;font-size:.85rem;}
+.game-prompt .gp-target{font-size:1.9rem;font-weight:800;margin-top:2px;}
+.bubbles{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+.bubble{aspect-ratio:1;border-radius:50%;display:grid;place-items:center;
+  font-family:'Scheherazade New',serif;font-size:3rem;color:#fff;cursor:pointer;
+  box-shadow:var(--shadow);direction:rtl;animation:floaty 3s ease-in-out infinite;}
+.bubble:active{transform:scale(.9);}
+.bubble.pop{animation:popout .45s ease forwards;}
+.bubble.shake{animation:shakex .4s;}
+@keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes popout{to{transform:scale(1.5);opacity:0}}
+@keyframes shakex{0%,100%{transform:none}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+
+/* ===== Nazra Reader ===== */
+.search{width:100%;padding:13px 16px;border-radius:16px;border:2px solid #EAD9B4;background:var(--white);
+  font-family:inherit;font-size:1rem;font-weight:600;color:var(--ink);margin-bottom:12px;}
+.loading{text-align:center;color:var(--ink-soft);font-weight:700;padding:30px;}
+.surah-row{background:var(--white);border-radius:18px;box-shadow:var(--shadow-sm);padding:12px 14px;
+  margin-bottom:9px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:transform .08s;}
+.surah-row:active{transform:scale(.98);}
+.s-no{width:36px;height:36px;border-radius:11px;background:var(--cream-2);display:grid;place-items:center;
+  font-weight:800;color:var(--emerald);font-size:.9rem;flex-shrink:0;}
+.s-mid{flex:1;min-width:0;}
+.s-name{font-weight:800;color:var(--ink);}
+.s-sub{font-size:.76rem;color:var(--ink-soft);font-weight:600;}
+.s-ar{font-family:'Scheherazade New',serif;font-size:1.5rem;color:var(--emerald);direction:rtl;}
+.last-read{background:linear-gradient(135deg,var(--emerald),var(--emerald-l));color:#fff;border-radius:18px;
+  padding:14px 16px;margin-bottom:12px;cursor:pointer;box-shadow:var(--shadow);}
+.last-read .lr-t{font-size:.75rem;opacity:.9;font-weight:700;}
+.last-read .lr-n{font-weight:800;font-size:1.1rem;}
+
+.reader-bar{display:flex;gap:8px;margin-bottom:12px;}
+.rb{flex:1;border:none;background:var(--white);border-radius:14px;padding:11px 8px;font-family:inherit;
+  font-weight:800;font-size:.82rem;color:var(--emerald);box-shadow:var(--shadow-sm);cursor:pointer;}
+.rb:active{transform:scale(.95);}
+.rb.on{background:var(--emerald);color:#fff;}
+.ayah{background:var(--white);border-radius:20px;box-shadow:var(--shadow-sm);padding:16px;margin-bottom:11px;
+  cursor:pointer;border:3px solid transparent;transition:border-color .2s;}
+.ayah.playing{border-color:var(--gold);background:#FFFCF3;}
+.ayah-ar{font-family:'Scheherazade New',serif;font-size:2rem;direction:rtl;color:var(--ink);line-height:2.15;
+  text-align:right;}
+.ayah-no{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;
+  background:var(--cream-2);color:var(--emerald);font-family:'Baloo 2',sans-serif;font-size:.72rem;
+  font-weight:800;margin-top:8px;}
+.bismillah{font-family:'Scheherazade New',serif;font-size:1.9rem;color:var(--emerald);direction:rtl;
+  text-align:center;background:var(--white);border-radius:20px;padding:16px;margin-bottom:11px;
+  box-shadow:var(--shadow-sm);}
+
+/* ===== Hifz ===== */
+.section-head{font-weight:800;color:var(--emerald);margin:16px 2px 10px;}
+.hifz-modes{display:flex;flex-direction:column;gap:11px;}
+.hz-card{background:var(--white);border-radius:20px;box-shadow:var(--shadow);padding:16px;
+  display:flex;align-items:center;gap:14px;cursor:pointer;transition:transform .08s;}
+.hz-card:active{transform:scale(.98);}
+.hz-ic{width:52px;height:52px;border-radius:16px;display:grid;place-items:center;font-size:26px;flex-shrink:0;}
+.hz-card.sabaq .hz-ic{background:#E6F3EF;}
+.hz-card.sabqi .hz-ic{background:#FFF1D6;}
+.hz-card.manzil .hz-ic{background:#F0E6FF;}
+.hz-t{font-weight:800;color:var(--ink);font-size:1.05rem;}
+.hz-s{font-size:.8rem;color:var(--ink-soft);font-weight:600;}
+.hifz-stat{background:linear-gradient(135deg,var(--emerald),var(--emerald-l));color:#fff;border-radius:20px;
+  padding:16px;margin-bottom:14px;display:flex;gap:10px;text-align:center;box-shadow:var(--shadow);}
+.hifz-stat div{flex:1;}
+.hifz-stat b{display:block;font-size:1.5rem;}
+.hifz-stat span{font-size:.72rem;opacity:.9;font-weight:700;}
+
+.mem-stage{margin-bottom:14px;}
+.mem-ayah{background:var(--white);border-radius:26px;box-shadow:var(--shadow);padding:26px 20px;
+  min-height:230px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  cursor:pointer;text-align:center;}
+.mem-ar{font-family:'Scheherazade New',serif;font-size:2.1rem;direction:rtl;color:var(--ink);
+  line-height:2.2;transition:filter .25s, opacity .25s;}
+.mem-ar.hidden-text{filter:blur(11px);opacity:.45;}
+.mem-tap{color:var(--ink-soft);font-weight:700;font-size:.85rem;margin-top:14px;}
+.mem-controls{display:flex;gap:8px;margin-bottom:11px;}
+.mem-controls .rb{flex:1;}
+.mem-verdict{display:flex;gap:10px;margin-bottom:11px;}
+.mem-verdict .btn{font-size:.95rem;padding:14px 10px;}
+.mem-nav{display:flex;gap:10px;}
+.mem-nav .rb{flex:1;padding:13px;}
+.mem-ayah.known{border:3px solid var(--emerald-l);}
+
+/* ===== Duas / Progress ===== */
+.done-tick{color:var(--emerald-l);font-weight:800;font-size:1.2rem;}
+.prog-hero{background:linear-gradient(135deg,var(--emerald),var(--emerald-l));color:#fff;border-radius:26px;
+  padding:22px 20px;text-align:center;box-shadow:var(--shadow);margin-bottom:14px;}
+.ph-star{font-size:2rem;font-weight:800;}
+.ph-name{font-weight:700;opacity:.92;margin-bottom:12px;}
+.ph-bar{height:12px;background:rgba(255,255,255,.25);border-radius:20px;overflow:hidden;}
+.ph-fill{height:100%;background:var(--gold-l);border-radius:20px;transition:width .6s ease;}
+.ph-sub{font-size:.8rem;font-weight:700;opacity:.9;margin-top:8px;}
+.prog-cards{display:flex;gap:10px;margin-bottom:6px;}
+.pc{flex:1;background:var(--white);border-radius:18px;box-shadow:var(--shadow-sm);padding:14px 8px;text-align:center;}
+.pc b{display:block;font-size:1.3rem;color:var(--emerald);}
+.pc span{font-size:.7rem;color:var(--ink-soft);font-weight:700;}
+.prog-row{background:var(--white);border-radius:16px;box-shadow:var(--shadow-sm);padding:12px 14px;
+  margin-bottom:8px;display:flex;align-items:center;gap:12px;}
+.prog-row.done{background:linear-gradient(135deg,#E6F3EF,#fff);}
+.pr-ic{font-size:22px;width:30px;text-align:center;}
+.pr-t{flex:1;font-weight:800;color:var(--ink);font-size:.95rem;}
+.pr-x{font-size:1.05rem;}
+
+/* ===== global voice banner ===== */
+.voice-banner{position:fixed;left:12px;right:12px;bottom:14px;max-width:496px;margin:0 auto;
+  background:#fff3d6;color:#8a6d1e;border:2px solid #E7C56A;border-radius:16px;padding:13px 40px 13px 14px;
+  font-weight:700;font-size:.82rem;line-height:1.55;box-shadow:var(--shadow);z-index:150;display:none;}
+.voice-banner.show{display:block;}
+.voice-banner button{position:absolute;top:8px;inset-inline-end:8px;background:none;border:none;
+  font-size:16px;font-weight:800;color:#8a6d1e;cursor:pointer;padding:4px 8px;}
+
+@media(max-width:360px){
+  .big-letter{font-size:7rem;}
+  .brand{font-size:2.1rem;}
+  .hk-l{font-size:3rem;}
+  .q-show{font-size:4.2rem;}
+  .bubble{font-size:2.4rem;}
+}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+
+  <!-- ===================== SPLASH ===================== -->
+  <section class="screen" id="splash">
+    <svg class="mascot bob" viewBox="0 0 120 120" id="splash-mascot"></svg>
+    <div class="brand"><span class="noor">Misbah</span>-ul-Quran</div>
+    <div class="brand-ar arabic">مِصْبَاحُ الْقُرْآن</div>
+    <div class="tag">Learn the Qaida the fun way ✨</div>
+    <button class="btn gold" style="min-width:200px" onclick="go('profiles')">Start ▶</button>
+    <button class="btn ghost" id="installBtn" style="display:none;margin-top:12px;min-width:200px" onclick="doInstall()">📲 Install app</button>
+  </section>
+
+  <!-- ===================== PROFILE SELECT ===================== -->
+  <section class="screen" id="profiles">
+    <div class="topbar">
+      <div class="brand" style="font-size:1.4rem"><span class="noor">Misbah</span>-ul-Quran</div>
+    </div>
+    <div class="center-title">Who is reading today?</div>
+    <div class="sub">Tap your name to begin</div>
+    <div class="profile-grid" id="profileGrid"></div>
+  </section>
+
+  <!-- ===================== ADD / EDIT PROFILE ===================== -->
+  <section class="screen" id="profileForm">
+    <div class="topbar">
+      <button class="iconbtn" style="margin-inline-start:0" onclick="go('profiles')">‹</button>
+      <div class="center-title" id="formTitle" style="margin:0">New Child</div>
+    </div>
+    <div class="field">
+      <label>Child's name</label>
+      <input id="fName" placeholder="e.g. Syed Muhammad Abdul Wasay" maxlength="40"/>
+    </div>
+    <div class="field">
+      <label>Age</label>
+      <input id="fAge" type="number" min="3" max="15" placeholder="e.g. 6"/>
+    </div>
+    <div class="field">
+      <label>Explanation language</label>
+      <select id="fLang">
+        <option value="ur">Urdu (اردو)</option>
+        <option value="en">English</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Choose an avatar</label>
+      <div class="avatar-pick" id="avatarPick"></div>
+      <input type="file" id="avatarFile" accept="image/*" style="display:none" onchange="handleAvatarFile(event)"/>
+    </div>
+    <button class="btn block" id="saveProfileBtn" onclick="saveProfile()">Save 💾</button>
+    <button class="btn coral block" id="deleteProfileBtn" onclick="confirmDelete()" style="margin-top:12px;display:none">Delete this child 🗑</button>
+  </section>
+
+  <!-- ===================== GREETING ===================== -->
+  <section class="screen" id="greet">
+    <svg class="mascot cheer" viewBox="0 0 120 120" id="greet-mascot"></svg>
+    <div class="greet-ar arabic">اَلسَّلَامُ عَلَيْكُمْ</div>
+    <div class="greet-name" id="greetName">Dost!</div>
+    <button class="btn gold" style="margin-top:20px;min-width:180px" onclick="go('menu')">Let's go ▶</button>
+  </section>
+
+  <!-- ===================== MAIN MENU ===================== -->
+  <section class="screen" id="menu">
+    <div class="topbar">
+      <div class="who"><span class="avatar-chip" id="menuAvatar">🌙</span><span id="menuName">Dost</span></div>
+      <button class="iconbtn" id="linkBtn" onclick="openLink()" title="Teacher">🔗</button>
+      <button class="iconbtn" style="margin-inline-start:8px" onclick="go('profiles')">⇄</button>
+    </div>
+    <div class="menu-grid">
+      <div class="tile qaida" onclick="openQaidaHub()">
+        <div class="ti">📖</div><div class="tt">Qaida</div>
+      </div>
+      <div class="tile" onclick="openNazra()"><div class="ti">🕋</div><div class="tt">Quran Reading</div></div>
+      <div class="tile" onclick="openHifz()"><div class="ti">🧠</div><div class="tt">Hifz</div></div>
+      <div class="tile" onclick="startGame()"><div class="ti">🎈</div><div class="tt">Games</div></div>
+      <div class="tile" onclick="openDuas()"><div class="ti">🤲</div><div class="tt">Duas &amp; Salah</div></div>
+      <div class="tile" onclick="openProgress()"><div class="ti">⭐</div><div class="tt">My Progress</div></div>
+    </div>
+  </section>
+
+  <!-- ===================== QAIDA HUB ===================== -->
+  <section class="screen" id="qaidaHub">
+    <div class="topbar">
+      <button class="iconbtn" style="margin-inline-start:0" onclick="go('menu')">‹</button>
+      <div class="center-title" style="margin:0;font-size:1.2rem">Qaida</div>
+    </div>
+    <div class="sub">Ek ek karke seekho ✨</div>
+    <div class="hub-grid" id="hubGrid"></div>
+  </section>
+
+  <!-- ===================== QAIDA LESSON ===================== -->
+  <section class="screen" id="qaida">
+    <div class="topbar">
+      <button class="iconbtn" style="margin-inline-start:0" onclick="go('menu')">‹</button>
+      <div class="center-title" id="qTitle" style="margin:0;font-size:1.2rem">Qaida</div>
+    </div>
+    <div class="progress-dots" id="qDots"></div>
+    <div class="lesson-wrap">
+      <div class="stage" id="qStage" onclick="playCurrent()">
+        <button class="speaker" onclick="event.stopPropagation();playCurrent()">🔊</button>
+        <!-- filled by JS -->
+      </div>
+      <div class="voice-note" id="voiceNote">🔈 Is device par Arabic voice install nahi hai. Phone/tablet ki settings → Languages se "Arabic" add karein.</div>
+      <div class="nav-row">
+        <button class="btn ghost" id="prevBtn" onclick="prevStep()">‹ Back</button>
+        <button class="btn gold" onclick="playCurrent()">Repeat 🔁</button>
+        <button class="btn" id="nextBtn" onclick="nextStep()">Next ›</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== QUIZ (Sawal-Jawab) ===================== -->
+  <section class="screen" id="quiz">
+    <div class="topbar">
+      <button class="iconbtn" style="margin-inline-start:0" onclick="openQaidaHub()">‹</button>
+      <div class="center-title" style="margin:0;font-size:1.2rem">Sawal-Jawab</div>
+      <span id="quizProgress" style="margin-inline-start:auto;font-weight:800;color:var(--emerald)"></span>
+    </div>
+    <div class="quiz-box" id="quizBox"></div>
+  </section>
+
+  <!-- ===================== NAZRA: SURAH LIST ===================== -->
+  <section class="screen" id="nazra">
+    <div class="topbar">
+      <button class="iconbtn" style="margin-inline-start:0" onclick="go('menu')">‹</button>
+      <div class="center-title" style="margin:0;font-size:1.2rem">Quran — Nazra</div>
+    </div>
+    <div id="lastRead"></div>
+    <input class="search" id="surahSearch" placeholder="Surah dhoondein… (naam ya number)" oninput="renderSurahList()"/>
+    <div id="surahList"><div class="loading">Loading surahs… ⏳</div></div>
+  </section>
+
+  <!-- ===================== NAZRA: READER ===================== -->
+  <section class="screen" id="reader">
+    <div class="topbar">
+      <button class="iconbtn" style="margin-inline-start:0" onclick="stopAudio();openNazra()">‹</button>
+      <div class="center-title" id="rTitle" style="margin:0;font-size:1.1rem">Surah</div>
+      <button class="iconbtn" onclick="openReaderSettings()">⚙</button>
+    </div>
+    <div class="reader-bar">
+      <button class="rb" onclick="playFrom(0)">▶ Start</button>
+      <button class="rb" id="rbAuto" onclick="toggleAuto()">🔁 Auto: off</button>
+      <button class="rb" id="rbRep" onclick="cycleRepeat()">Repeat: 1x</button>
+    </div>
+    <div id="ayahList"><div class="loading">Loading… ⏳</div></div>
+  </section>
+
+  <!-- ===================== HIFZ HUB ===================== -->
+  <section class="screen" id="hifz">
+    <div class="topbar">
+      <button class="iconbtn" style="margin-inline-start:0" onclick="go('menu')">‹</button>
+      <div class="center-title" style="margin:0;font-size:1.2rem">Hifz 🧠</div>
+    </div>
+    <div id="hifzStats"></div>
+    <div class="hifz-modes">
+      <div class="hz-card sabaq" onclick="pickHifzSurah('sabaq')">
+        <div class="hz-ic">🆕</div>
+        <div><div class="hz-t">Sabaq</div><div class="hz-s">Naya sabaq yaad karo</div></div>
+      </div>
+      <div class="hz-card sabqi" onclick="startReview('sabqi')">
+        <div class="hz-ic">🔁</div>
+        <div><div class="hz-t">Sabqi</div><div class="hz-s" id="sabqiCount">Haali revision</div></div>
+      </div>
+      <div class="hz-card manzil" onclick="startReview('manzil')">
+        <div class="hz-ic">📚</div>
+        <div><div class="hz-t">Manzil</div><div class="hz-s" id="manzilCount">Purani revision</div></div>
+      </div>
+    </div>
+    <div class="section-head" id="hifzListHead" style="display:none">Surah chuno</div>
+    <input class="search" id="hifzSearch" placeholder="Surah dhoondein…" oninput="renderHifzSurahs()" style="display:none"/>
+    <div id="hifzSurahList"></div>
+  </section>
+
+  <!-- ===================== HIFZ: MEMORIZE ===================== -->
+  <section class="screen" id="memorize">
+    <div class="topbar">
+      <button class="iconbtn" style="margin-inline-start:0" onclick="stopAudio();openHifz()">‹</button>
+      <div class="center-title" id="mTitle" style="margin:0;font-size:1.05rem">Hifz</div>
+      <span id="mCount" style="margin-inline-start:auto;font-weight:800;color:var(--emerald)"></span>
+    </div>
+
+    <div class="mem-stage">
+      <div class="mem-ayah" id="memAyah" onclick="toggleHide()">
+        <div class="mem-ar hidden-text" id="memAr">—</div>
+        <div class="mem-tap" id="memTap">👆 Tap karke dekho</div>
+      </div>
+    </div>
+
+    <div class="mem-controls">
+      <button class="rb" id="mHideBtn" onclick="toggleHide()">🙈 Hide</button>
+      <button class="rb" onclick="playMemAyah()">🔊 Suno</button>
+      <button class="rb" id="mRepBtn" onclick="cycleMemRepeat()">Repeat: 5x</button>
+    </div>
+
+    <div class="mem-verdict">
+      <button class="btn coral" style="flex:1" onclick="markAyah(false)">😕 Phir se</button>
+      <button class="btn" style="flex:1" onclick="markAyah(true)">✅ Yaad ho gayi</button>
+    </div>
+
+    <div class="mem-nav">
+      <button class="rb" onclick="memPrev()">‹ Back</button>
+      <button class="rb" onclick="memNext()">Next ›</button>
+    </div>
+  </section>
+
+  <!-- ===================== DUAS & SALAH HUB ===================== -->
+  <section class="screen" id="duas">
+    <div class="topbar">
+      <button class="iconbtn" style="margin-inline-start:0" onclick="go('menu')">‹</button>
+      <div class="center-title" style="margin:0;font-size:1.2rem">Duas &amp; Salah 🤲</div>
+    </div>
+    <div class="hz-card sabaq" onclick="openSalah()" style="margin-bottom:14px">
+      <div class="hz-ic">🕌</div>
+      <div><div class="hz-t">Namaz seekho</div><div class="hz-s">Step by step, shuru se aakhir tak</div></div>
+    </div>
+    <div class="section-head">Masnoon Duain</div>
+    <div id="duaList"></div>
+  </section>
+
+  <!-- ===================== DUA CARD ===================== -->
+  <section class="screen" id="duaCard">
+    <div class="topbar">
+      <button class="iconbtn" style="margin-inline-start:0" onclick="openDuas()">‹</button>
+      <div class="center-title" id="dTitle" style="margin:0;font-size:1.1rem">Dua</div>
+      <span id="dCount" style="margin-inline-start:auto;font-weight:800;color:var(--emerald)"></span>
+    </div>
+    <div class="lesson-wrap">
+      <div class="stage" id="dStage" onclick="playDua()">
+        <button class="speaker" onclick="event.stopPropagation();playDua()">🔊</button>
+      </div>
+      <div class="nav-row">
+        <button class="btn ghost" id="dPrev" onclick="duaPrev()">‹ Back</button>
+        <button class="btn gold" onclick="playDua()">Repeat 🔁</button>
+        <button class="btn" id="dNext" onclick="duaNext()">Next ›</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SALAH GUIDE ===================== -->
+  <section class="screen" id="salah">
+    <div class="topbar">
+      <button class="iconbtn" style="margin-inline-start:0" onclick="openDuas()">‹</button>
+      <div class="center-title" style="margin:0;font-size:1.1rem">Namaz 🕌</div>
+      <span id="slCount" style="margin-inline-start:auto;font-weight:800;color:var(--emerald)"></span>
+    </div>
+    <div class="progress-dots" id="slDots"></div>
+    <div class="lesson-wrap">
+      <div class="stage" id="slStage" onclick="playSalah()">
+        <button class="speaker" onclick="event.stopPropagation();playSalah()">🔊</button>
+      </div>
+      <div class="nav-row">
+        <button class="btn ghost" id="slPrev" onclick="salahPrev()">‹ Back</button>
+        <button class="btn gold" onclick="playSalah()">Repeat 🔁</button>
+        <button class="btn" id="slNext" onclick="salahNext()">Next ›</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== MY PROGRESS ===================== -->
+  <section class="screen" id="progress">
+    <div class="topbar">
+      <button class="iconbtn" style="margin-inline-start:0" onclick="go('menu')">‹</button>
+      <div class="center-title" style="margin:0;font-size:1.2rem">My Progress ⭐</div>
+    </div>
+    <div id="progBody"></div>
+  </section>
+
+  <!-- ===================== TEACHER LINK ===================== -->
+  <section class="screen" id="link">
+    <div class="topbar">
+      <button class="iconbtn" style="margin-inline-start:0" onclick="go('menu')">‹</button>
+      <div class="center-title" style="margin:0;font-size:1.2rem">Teacher 🔗</div>
+    </div>
+    <div id="linkBody"></div>
+  </section>
+
+  <!-- ===================== GAME: Huroof Hunt ===================== -->
+  <section class="screen" id="game">
+    <div class="topbar">
+      <button class="iconbtn" style="margin-inline-start:0" onclick="go('menu')">‹</button>
+      <div class="center-title" style="margin:0;font-size:1.2rem">Huroof Hunt 🎈</div>
+    </div>
+    <div id="gamePlay">
+      <div class="game-hdr">
+        <span class="game-stat" id="gRound">Round 1/10</span>
+        <span class="game-stat" id="gCombo">🔥 0</span>
+        <span class="game-stat" id="gScore">⭐ 0</span>
+      </div>
+      <div class="game-prompt" onclick="playGameTarget()">
+        <div class="gp-label">Ye harf dhoondo 🔊</div>
+        <div class="gp-target" id="gTarget">—</div>
+      </div>
+      <div class="bubbles" id="bubbles"></div>
+    </div>
+    <div id="gameResult" style="display:none"></div>
+  </section>
+
+  <!-- ===================== REWARD ===================== -->
+  <section class="screen" id="reward">
+    <div class="reward-star">🌟</div>
+    <div class="reward-title" id="rewardTitle">Shabash!</div>
+    <div class="sub" id="rewardSub">You finished the lesson!</div>
+    <button class="btn gold" style="min-width:180px;margin-top:10px" id="rewardBackBtn" onclick="rewardBack()">Back 🏠</button>
+  </section>
+
+</div>
+
+<!-- ===================== GLOBAL VOICE BANNER ===================== -->
+<div class="voice-banner" id="voiceBanner">
+  🔇 <b>Awaaz nahi aa rahi?</b> Is device par <b>Arabic voice</b> install nahi hai.<br>
+  Settings → Languages → <b>Arabic</b> add karein (ya Google TTS install karein).
+  <button onclick="this.parentElement.classList.remove('show')">✕</button>
+</div>
+
+<!-- ===================== READER SETTINGS ===================== -->
+<div class="modal-overlay" id="readerSettings">
+  <div class="modal-card" style="text-align:start">
+    <div style="font-weight:800;color:var(--emerald);font-size:1.15rem;margin-bottom:14px;text-align:center">Reader settings ⚙</div>
+    <div style="font-weight:700;margin-bottom:6px">Qari (reciter)</div>
+    <select id="reciterSel" onchange="setReciter(this.value)"
+      style="width:100%;padding:12px 14px;border-radius:14px;border:2px solid #EAD9B4;font-family:inherit;font-weight:700;font-size:1rem;margin-bottom:16px">
+      <option value="ar.husary">Mahmoud Al-Husary (seekhne ke liye best)</option>
+      <option value="ar.alafasy">Mishary Alafasy</option>
+      <option value="ar.abdulbasitmurattal">Abdul Basit (Murattal)</option>
+      <option value="ar.minshawi">Al-Minshawi</option>
+    </select>
+    <div style="font-weight:700;margin-bottom:6px">Arabic text size</div>
+    <div style="display:flex;gap:10px;margin-bottom:18px">
+      <button class="btn ghost" style="flex:1" onclick="setFont(-4)">A −</button>
+      <button class="btn ghost" style="flex:1" onclick="setFont(4)">A +</button>
+    </div>
+    <button class="btn block" onclick="document.getElementById('readerSettings').classList.remove('show')">Done ✓</button>
+  </div>
+</div>
+
+<!-- ===================== CONFIRM MODAL ===================== -->
+<div class="modal-overlay" id="confirmModal">
+  <div class="modal-card">
+    <div class="modal-emoji">🗑️</div>
+    <div class="modal-msg" id="confirmMsg">Delete?</div>
+    <div class="modal-btns">
+      <button class="btn ghost" onclick="closeConfirm()">Cancel</button>
+      <button class="btn coral" id="confirmYes">Delete</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+/* ============================================================
+   ⚙️  SETUP — same Supabase project as the Teacher Panel.
+   Blank chhod dein to app normal chalti rahegi (bas sync nahi hoga).
+   ============================================================ */
+const SUPABASE_URL = "PASTE_YOUR_SUPABASE_URL_HERE";
+const SUPABASE_KEY = "PASTE_YOUR_ANON_KEY_HERE";
+const SYNC_ON = !SUPABASE_URL.startsWith("PASTE") && !SUPABASE_KEY.startsWith("PASTE");
+let sb = SYNC_ON ? supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
+
+/* ============================================================
+   1. QAIDA_CONFIG  — ALL learning content lives here.
+   To add letters/rules: edit this object only. UI won't change.
+   ============================================================ */
+const QAIDA_CONFIG = {
+
+  // Always taught first, before the letters
+  opening:[
+    { arabic:"أَعُوذُ بِاللَّهِ مِنَ الشَّيْطَانِ الرَّجِيمِ",
+      hint:{ur:"شیطان سے اللہ کی پناہ مانگتے ہیں", en:"We seek Allah's protection from Shaitan"} },
+    { arabic:"بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ",
+      hint:{ur:"اللہ کے نام سے شروع", en:"In the name of Allah, the Most Merciful"} }
+  ],
+
+  // Lessons — each has items. First lesson = the Arabic letters (huroof-e-tahajji)
+  lessons:[
+    {
+      id:"letters-1", icon:"🔤", type:"letters",
+      title:{ur:"حروفِ تہجی", en:"The Letters"},
+      items:[
+        {letter:"ا", name:"Alif",  visual:"🪄", mnemonic:{ur:"سیدھی کھڑی لاٹھی جیسا",   en:"A tall straight stick"}},
+        {letter:"ب", name:"Ba",    visual:"🛶", mnemonic:{ur:"کشتی، نیچے ایک نقطہ",       en:"A boat with one dot below"}},
+        {letter:"ت", name:"Ta",    visual:"🛶", mnemonic:{ur:"کشتی، اوپر دو نقطے",        en:"A boat with two dots on top"}},
+        {letter:"ث", name:"Sa",    visual:"🛶", mnemonic:{ur:"کشتی، اوپر تین نقطے",       en:"A boat with three dots on top"}},
+        {letter:"ج", name:"Jeem",  visual:"🥣", mnemonic:{ur:"پیٹ، اندر ایک نقطہ",        en:"A curved belly, one dot inside"}},
+        {letter:"ح", name:"Hha",   visual:"🥣", mnemonic:{ur:"پیٹ، کوئی نقطہ نہیں",       en:"A curved belly, no dots"}},
+        {letter:"خ", name:"Kha",   visual:"🥣", mnemonic:{ur:"پیٹ، اوپر ایک نقطہ",        en:"A curved belly, one dot above"}},
+        {letter:"د", name:"Dal",   visual:"🪝", mnemonic:{ur:"چھوٹی سی ہُک",             en:"A little hook"}},
+        {letter:"ذ", name:"Zal",   visual:"🪝", mnemonic:{ur:"ہُک، اوپر ایک نقطہ",        en:"A hook with one dot above"}},
+        {letter:"ر", name:"Ra",    visual:"🎣", mnemonic:{ur:"جھکی ہوئی چھڑی",           en:"A bending stick"}},
+        {letter:"ز", name:"Za",    visual:"🎣", mnemonic:{ur:"جھکی چھڑی، اوپر نقطہ",      en:"A bending stick, dot on top"}},
+        {letter:"س", name:"Seen",  visual:"🦷", mnemonic:{ur:"تین چھوٹے دانت",           en:"Three little teeth"}},
+        {letter:"ش", name:"Sheen", visual:"🦷", mnemonic:{ur:"تین دانت، اوپر تین نقطے",   en:"Three teeth, three dots above"}},
+        {letter:"ص", name:"Saad",  visual:"🦆", mnemonic:{ur:"بطخ جیسا",                 en:"Shaped like a duck"}},
+        {letter:"ض", name:"Zaad",  visual:"🦆", mnemonic:{ur:"بطخ، اوپر ایک نقطہ",        en:"A duck with one dot above"}},
+        {letter:"ط", name:"Toa",   visual:"🏑", mnemonic:{ur:"کھڑی لاٹھی والا",          en:"With a tall standing stick"}},
+        {letter:"ظ", name:"Zoa",   visual:"🏑", mnemonic:{ur:"کھڑی لاٹھی، اوپر نقطہ",     en:"Tall stick, one dot above"}},
+        {letter:"ع", name:"Ain",   visual:"👄", mnemonic:{ur:"کھلا منہ جیسا",            en:"Like an open mouth"}},
+        {letter:"غ", name:"Ghain", visual:"👄", mnemonic:{ur:"کھلا منہ، اوپر نقطہ",       en:"Open mouth, one dot above"}},
+        {letter:"ف", name:"Fa",    visual:"⭕", mnemonic:{ur:"گول سر، اوپر ایک نقطہ",     en:"A round head, one dot above"}},
+        {letter:"ق", name:"Qaf",   visual:"⭕", mnemonic:{ur:"گول سر، اوپر دو نقطے",      en:"A round head, two dots above"}},
+        {letter:"ك", name:"Kaf",   visual:"🔑", mnemonic:{ur:"چابی جیسا",               en:"Shaped like a key"}},
+        {letter:"ل", name:"Laam",  visual:"🏒", mnemonic:{ur:"لمبی مڑی ہوئی چھڑی",       en:"A tall curved stick"}},
+        {letter:"م", name:"Meem",  visual:"🎈", mnemonic:{ur:"گول سر، ساتھ دُم",         en:"A round head with a tail"}},
+        {letter:"ن", name:"Noon",  visual:"🥣", mnemonic:{ur:"پیالی، اوپر ایک نقطہ",      en:"A bowl with one dot above"}},
+        {letter:"و", name:"Waw",   visual:"🫧", mnemonic:{ur:"گول موتی جیسا",            en:"Round like a bubble"}},
+        {letter:"ه", name:"Ha",    visual:"💗", mnemonic:{ur:"گول سا دل جیسا",           en:"Like a little round heart"}},
+        {letter:"ء", name:"Hamza", visual:"✂️", mnemonic:{ur:"چھوٹی جھٹکے والی",         en:"A small quick jerk"}},
+        {letter:"ي", name:"Ya",    visual:"🛶", mnemonic:{ur:"کشتی، نیچے دو نقطے",        en:"A boat with two dots below"}}
+      ]
+    },
+
+    // ---- Harakat: zabar / zer / pesh ----
+    {
+      id:"harakat", icon:"◌َ", type:"harakat",
+      title:{ur:"حرکات — زبر، زیر، پیش", en:"Harakat — Vowels"},
+      intro:{ur:"زبر (اوپر) = اَ ، زیر (نیچے) = اِ ، پیش (اوپر گول) = اُ", en:"Zabar = a, Zer = i, Pesh = u"},
+      items:[
+        {letter:"ا",name:"Alif"},{letter:"ب",name:"Ba"},{letter:"ت",name:"Ta"},
+        {letter:"ج",name:"Jeem"},{letter:"د",name:"Dal"},{letter:"ر",name:"Ra"},
+        {letter:"س",name:"Seen"},{letter:"ع",name:"Ain"},{letter:"ف",name:"Fa"},
+        {letter:"ك",name:"Kaf"},{letter:"ل",name:"Laam"},{letter:"م",name:"Meem"},
+        {letter:"ن",name:"Noon"},{letter:"ه",name:"Ha"}
+      ]
+    },
+
+    // ---- Jorr: joining letters ----
+    {
+      id:"jorr", icon:"🔗", type:"joined",
+      title:{ur:"حروف ملانا (جوڑ)", en:"Joining Letters"},
+      intro:{ur:"دو یا تین حرف مل کر پڑھو", en:"Read two or three letters joined"},
+      items:[
+        {arabic:"بَتَ", tr:"ba-ta"},
+        {arabic:"سَمَ", tr:"sa-ma"},
+        {arabic:"جَدَ", tr:"ja-da"},
+        {arabic:"نَبَ", tr:"na-ba"},
+        {arabic:"كَتَبَ", tr:"ka-ta-ba"},
+        {arabic:"ذَهَبَ", tr:"za-ha-ba"},
+        {arabic:"نَصَرَ", tr:"na-sa-ra"},
+        {arabic:"جَلَسَ", tr:"ja-la-sa"}
+      ]
+    },
+
+    // ---- Madd letters ----
+    {
+      id:"madd", icon:"〰️", type:"rule",
+      title:{ur:"حروفِ مد", en:"Letters of Madd"},
+      rule:{ur:"تین حرف آواز کو لمبا کرتے ہیں: ا ، و ، ی", en:"Three letters stretch the sound: ا و ي"},
+      items:[
+        {arabic:"بَا", tr:"baa — long a"},
+        {arabic:"بُو", tr:"buu — long u"},
+        {arabic:"بِي", tr:"bii — long i"},
+        {arabic:"قَالَ", tr:"qaala"},
+        {arabic:"نُوحٌ", tr:"Nooh"}
+      ]
+    },
+
+    // ---- Qalqalah ----
+    {
+      id:"qalqalah", icon:"🔔", type:"rule",
+      title:{ur:"قلقلہ", en:"Qalqalah"},
+      rule:{ur:"پانچ حرف جن میں ہلکی گونج آتی ہے: ق ط ب ج د (قُطُب جَدْ)", en:"Five echo letters: ق ط ب ج د"},
+      items:[
+        {arabic:"اَقْ", tr:"aq — echo"},
+        {arabic:"اَطْ", tr:"at"},
+        {arabic:"اَبْ", tr:"ab"},
+        {arabic:"اَجْ", tr:"aj"},
+        {arabic:"اَدْ", tr:"ad"}
+      ]
+    }
+  ],
+
+  // --- Sawal-Jawab (Q&A). Add more here anytime. ---
+  quiz:[
+    { q:{ur:"یہ کون سا حرف ہے؟", en:"Which letter is this?"}, show:"ج", options:["Jeem","Seen","Meem"], answer:0 },
+    { q:{ur:"یہ کون سا حرف ہے؟", en:"Which letter is this?"}, show:"س", options:["Seen","Sheen","Saad"], answer:0 },
+    { q:{ur:"مد کے حروف کتنے ہیں؟", en:"How many Madd letters are there?"}, options:["2","3","4"], answer:1 },
+    { q:{ur:"زبر کی آواز کیا ہے؟", en:"What is the Zabar sound?"}, show:"بَ", options:["ba","bi","bu"], answer:0 },
+    { q:{ur:"پیش کی آواز؟", en:"What is the Pesh sound?"}, show:"بُ", options:["ba","bi","bu"], answer:2 },
+    { q:{ur:"قلقلہ کا ایک حرف کون سا ہے؟", en:"Which one is a Qalqalah letter?"}, options:["م","ق","ل"], answer:1 }
+  ]
+};
+
+/* ============================================================
+   1b. DUAS + SALAH CONFIG — add/edit freely, UI won't change.
+   ============================================================ */
+const DUAS = [
+  { id:"d1", icon:"🍽️", title:{ur:"کھانے سے پہلے", en:"Before eating"},
+    arabic:"بِسْمِ اللَّهِ",
+    tr:"Bismillah",
+    mean:{ur:"اللہ کے نام سے (شروع کرتا ہوں)", en:"In the name of Allah"} },
+  { id:"d2", icon:"✅", title:{ur:"کھانے کے بعد", en:"After eating"},
+    arabic:"اَلْحَمْدُ لِلَّهِ الَّذِي أَطْعَمَنَا وَسَقَانَا وَجَعَلَنَا مُسْلِمِينَ",
+    tr:"Alhamdulillahilladhi at'amana wa saqana wa ja'alana muslimeen",
+    mean:{ur:"سب تعریف اللہ کے لیے جس نے ہمیں کھلایا، پلایا اور مسلمان بنایا", en:"Praise be to Allah who fed us, gave us drink, and made us Muslims"} },
+  { id:"d3", icon:"😴", title:{ur:"سونے سے پہلے", en:"Before sleeping"},
+    arabic:"اَللَّهُمَّ بِاسْمِكَ أَمُوتُ وَأَحْيَا",
+    tr:"Allahumma bismika amootu wa ahya",
+    mean:{ur:"اے اللہ! تیرے نام سے میں مرتا ہوں اور جیتا ہوں", en:"O Allah, in Your name I die and I live"} },
+  { id:"d4", icon:"🌅", title:{ur:"جاگنے کے بعد", en:"After waking up"},
+    arabic:"اَلْحَمْدُ لِلَّهِ الَّذِي أَحْيَانَا بَعْدَ مَا أَمَاتَنَا وَإِلَيْهِ النُّشُورُ",
+    tr:"Alhamdulillahilladhi ahyana ba'da ma amatana wa ilayhin-nushoor",
+    mean:{ur:"سب تعریف اللہ کے لیے جس نے موت کے بعد ہمیں زندہ کیا، اور اسی کی طرف لوٹنا ہے", en:"Praise be to Allah who gave us life after death, and to Him is the return"} },
+  { id:"d5", icon:"🚪", title:{ur:"گھر سے نکلتے وقت", en:"Leaving the house"},
+    arabic:"بِسْمِ اللَّهِ تَوَكَّلْتُ عَلَى اللَّهِ وَلَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ",
+    tr:"Bismillahi tawakkaltu 'alallah, wa la hawla wa la quwwata illa billah",
+    mean:{ur:"اللہ کے نام سے، میں نے اللہ پر بھروسہ کیا، اور اللہ کے بغیر نہ کوئی طاقت ہے نہ قوت", en:"In the name of Allah, I trust in Allah; there is no power except with Allah"} },
+  { id:"d6", icon:"🚿", title:{ur:"بیت الخلاء میں جاتے وقت", en:"Entering the washroom"},
+    arabic:"بِسْمِ اللَّهِ، اَللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْخُبُثِ وَالْخَبَائِثِ",
+    tr:"Bismillah, Allahumma inni a'oodhu bika minal khubuthi wal khaba'ith",
+    mean:{ur:"اللہ کے نام سے۔ اے اللہ! میں تیری پناہ مانگتا ہوں ناپاک جنّوں اور جنّیوں سے", en:"In the name of Allah. O Allah, I seek Your protection from evil jinn, male and female"} },
+  { id:"d7", icon:"📖", title:{ur:"علم میں اضافے کی دعا", en:"Dua for knowledge"},
+    arabic:"رَبِّ زِدْنِي عِلْمًا",
+    tr:"Rabbi zidni 'ilma",
+    mean:{ur:"اے میرے رب! میرے علم میں اضافہ فرما", en:"My Lord, increase me in knowledge"} },
+  { id:"d8", icon:"🚗", title:{ur:"سواری پر بیٹھتے وقت", en:"Riding a vehicle"},
+    arabic:"سُبْحَانَ الَّذِي سَخَّرَ لَنَا هَٰذَا وَمَا كُنَّا لَهُ مُقْرِنِينَ",
+    tr:"Subhanalladhi sakhkhara lana hadha wa ma kunna lahu muqrineen",
+    mean:{ur:"پاک ہے وہ ذات جس نے اسے ہمارے بس میں کیا", en:"Glory to Him who subjected this to us"} }
+];
+
+const SALAH_STEPS = [
+  { icon:"🧼", title:{ur:"وضو", en:"Wudu"},
+    say:{ur:"پہلے وضو کریں — ہاتھ، منہ، بازو، سر اور پاؤں دھوئیں", en:"First make wudu — wash hands, face, arms, wipe head, wash feet"} },
+  { icon:"🧭", title:{ur:"نیت اور قبلہ", en:"Intention & Qibla"},
+    say:{ur:"قبلہ کی طرف کھڑے ہوں اور دل میں نیت کریں", en:"Face the Qibla and make the intention in your heart"} },
+  { icon:"🙌", title:{ur:"تکبیرِ تحریمہ", en:"Takbir"}, arabic:"اَللَّهُ أَكْبَرُ",
+    say:{ur:"دونوں ہاتھ کانوں تک اٹھا کر کہیں: اللہ اکبر", en:"Raise both hands to your ears and say: Allahu Akbar"} },
+  { icon:"🧍", title:{ur:"قیام — سورۃ الفاتحہ", en:"Qiyam — Al-Fatiha"}, arabic:"اَلْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ",
+    say:{ur:"ہاتھ باندھ کر سورۃ الفاتحہ پڑھیں، پھر کوئی سورت", en:"Fold your hands, recite Al-Fatiha, then a short surah"} },
+  { icon:"🙇", title:{ur:"رکوع", en:"Ruku"}, arabic:"سُبْحَانَ رَبِّيَ الْعَظِيمِ",
+    say:{ur:"جھک کر تین بار کہیں: سبحان ربی العظیم", en:"Bow down and say three times: Subhana Rabbiyal 'Azeem"} },
+  { icon:"🧍", title:{ur:"قومہ", en:"Standing up"}, arabic:"سَمِعَ اللَّهُ لِمَنْ حَمِدَهُ",
+    say:{ur:"سیدھے کھڑے ہوں: سمع اللہ لمن حمدہ — ربنا لک الحمد", en:"Stand up straight: Sami'Allahu liman hamidah — Rabbana lakal hamd"} },
+  { icon:"🤲", title:{ur:"سجدہ", en:"Sajdah"}, arabic:"سُبْحَانَ رَبِّيَ الْأَعْلَىٰ",
+    say:{ur:"سجدے میں جائیں اور تین بار کہیں: سبحان ربی الاعلیٰ", en:"Go into sajdah and say three times: Subhana Rabbiyal A'la"} },
+  { icon:"🧎", title:{ur:"جلسہ", en:"Sitting"}, arabic:"رَبِّ اغْفِرْ لِي",
+    say:{ur:"دو سجدوں کے درمیان بیٹھیں: رب اغفر لی", en:"Sit between the two sajdahs: Rabbighfir li"} },
+  { icon:"🧎", title:{ur:"تشہد", en:"Tashahhud"}, arabic:"اَلتَّحِيَّاتُ لِلَّهِ وَالصَّلَوَاتُ وَالطَّيِّبَاتُ",
+    say:{ur:"بیٹھ کر تشہد پڑھیں، اور شہادت کی انگلی اٹھائیں", en:"Sit and recite the Tashahhud, raising your index finger"} },
+  { icon:"🌸", title:{ur:"درود شریف", en:"Durood"}, arabic:"اَللَّهُمَّ صَلِّ عَلَىٰ مُحَمَّدٍ",
+    say:{ur:"نبی ﷺ پر درود بھیجیں", en:"Send blessings upon the Prophet ﷺ"} },
+  { icon:"👋", title:{ur:"سلام", en:"Salam"}, arabic:"اَلسَّلَامُ عَلَيْكُمْ وَرَحْمَةُ اللَّهِ",
+    say:{ur:"دائیں پھر بائیں طرف سلام پھیریں — نماز مکمل!", en:"Turn right then left saying Salam — prayer complete!"} }
+];
+
+/* ============================================================
+   2. STATE + STORAGE
+   ============================================================ */
+const AVATARS = ["🌙","⭐","🌸","🐤","🦋","🌷","🐝","🦉","🐣","🕌","📖","🌟"];
+const LS_KEY = "noorQaida.v1";
+
+let store = load();               // {profiles:[], currentId:null}
+let editingId = null;             // profile being edited
+let pickedAvatar = AVATARS[0];
+
+let lesson = { steps:[], index:0, lessonId:null };  // active Qaida run
+
+function load(){
+  try{ return JSON.parse(localStorage.getItem(LS_KEY)) || {profiles:[],currentId:null}; }
+  catch(e){ return {profiles:[],currentId:null}; }
+}
+function save(){ localStorage.setItem(LS_KEY, JSON.stringify(store)); }
+function currentProfile(){ return store.profiles.find(p=>p.id===store.currentId) || null; }
+
+/* ============================================================
+   3. AUDIO  (SpeechSynthesis: Arabic ar-SA)
+   ============================================================ */
+let voicesReady = false;
+function primeVoices(){
+  const v = speechSynthesis.getVoices();
+  if(v.length){ voicesReady = true; }
+}
+speechSynthesis.onvoiceschanged = primeVoices;
+primeVoices();
+
+function pickVoice(lang){
+  const vs = speechSynthesis.getVoices();
+  return vs.find(v=>v.lang && v.lang.toLowerCase().startsWith(lang)) || null;
+}
+/* ------------------------------------------------------------
+   sayIt(text, audioUrl)
+   If a real recording is provided (audioUrl), play THAT — it is always
+   better and works on every device. Otherwise fall back to device TTS.
+   To add recordings later: put an `audio:"audio/xyz.mp3"` field on any
+   dua / letter / salah step in the config above. No code changes needed.
+   ------------------------------------------------------------ */
+let voiceEl = new Audio();
+function sayIt(text, audioUrl){
+  if(audioUrl){
+    try{ speechSynthesis.cancel(); }catch(e){}
+    voiceEl.src = audioUrl;
+    voiceEl.play().catch(()=>speak(text));   // file missing → fall back to TTS
+    return;
+  }
+  speak(text);
+}
+
+function speak(text, lang="ar-SA"){
+  if(!('speechSynthesis' in window)){ showVoiceNote(true); return; }
+  const v = pickVoice("ar");
+  if(!v){
+    // No Arabic voice on this device — speaking Arabic with an English voice
+    // produces silence/garbage, so don't try. Tell the user instead.
+    showVoiceNote(true);
+    // voices sometimes load late — retry once shortly after
+    if(!speechSynthesis.getVoices().length && !speak._retried){
+      speak._retried = true;
+      setTimeout(()=>{ speak._retried=false; speak(text, lang); }, 600);
+    }
+    return;
+  }
+  showVoiceNote(false);
+  speechSynthesis.cancel();
+  // Chrome bug: speak() right after cancel() is ignored — give it a tick
+  setTimeout(()=>{
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = lang; u.voice = v; u.rate = .75; u.pitch = 1.05;
+    speechSynthesis.speak(u);
+  }, 90);
+}
+function showVoiceNote(show){
+  const n = document.getElementById('voiceNote');       // qaida screen note
+  if(n) n.classList.toggle('show', show);
+  const g = document.getElementById('voiceBanner');     // global banner
+  if(g) g.classList.toggle('show', show);
+}
+
+/* ============================================================
+   4. MASCOT (inline SVG crescent "Noori")
+   ============================================================ */
+const MASCOT_SVG = `
+  <defs>
+    <linearGradient id="moong" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#F7CE5B"/><stop offset="1" stop-color="#E7A928"/>
+    </linearGradient>
+  </defs>
+  <circle cx="88" cy="30" r="6" fill="#F7CE5B"/>
+  <circle cx="26" cy="24" r="4" fill="#F7CE5B"/>
+  <path d="M78 20 A44 44 0 1 0 78 100 A34 34 0 1 1 78 20 Z" fill="url(#moong)"/>
+  <circle cx="46" cy="52" r="5.5" fill="#4a3510"/>
+  <circle cx="66" cy="50" r="5.5" fill="#4a3510"/>
+  <circle cx="48" cy="50" r="1.8" fill="#fff"/>
+  <circle cx="68" cy="48" r="1.8" fill="#fff"/>
+  <path d="M44 66 Q56 78 70 64" stroke="#4a3510" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <circle cx="40" cy="64" r="5" fill="#FF9E9E" opacity=".6"/>
+  <circle cx="72" cy="61" r="5" fill="#FF9E9E" opacity=".6"/>`;
+document.getElementById('splash-mascot').innerHTML = MASCOT_SVG;
+document.getElementById('greet-mascot').innerHTML = MASCOT_SVG;
+
+/* ============================================================
+   5. ROUTER + SCREENS
+   ============================================================ */
+function go(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.getElementById('app').scrollTop = 0;
+  if(id==='profiles') renderProfiles();
+  if(id==='menu') renderMenu();
+}
+
+/* ---- Profiles ---- */
+function renderProfiles(){
+  const grid = document.getElementById('profileGrid');
+  grid.innerHTML = "";
+  store.profiles.forEach(p=>{
+    const c = document.createElement('div');
+    c.className='pcard';
+    c.innerHTML = `<button class="mini-edit" onclick="event.stopPropagation();editProfile('${p.id}')" title="Edit">✎</button>
+      <div class="pav">${avatarInner(p.avatar)}</div><div class="pname">${escapeHtml(p.name)}</div>
+      <div class="page">Age ${p.age||'-'}</div>`;
+    c.onclick = ()=>selectProfile(p.id);
+    grid.appendChild(c);
+  });
+  const add = document.createElement('div');
+  add.className='pcard add';
+  add.innerHTML = `<div class="plus">+</div><div class="pname">Add child</div>`;
+  add.onclick = ()=>newProfile();
+  grid.appendChild(add);
+}
+
+function newProfile(){
+  editingId=null; pickedAvatar=AVATARS[0];
+  document.getElementById('formTitle').textContent="New Child";
+  document.getElementById('fName').value="";
+  document.getElementById('fAge').value="";
+  document.getElementById('fLang').value="ur";
+  document.getElementById('deleteProfileBtn').style.display="none";
+  renderAvatarPick();
+  go('profileForm');
+}
+function editProfile(id){
+  const p = store.profiles.find(x=>x.id===id); if(!p) return;
+  editingId=id; pickedAvatar=p.avatar;
+  document.getElementById('formTitle').textContent="Edit "+p.name;
+  document.getElementById('fName').value=p.name;
+  document.getElementById('fAge').value=p.age||"";
+  document.getElementById('fLang').value=p.lang||"ur";
+  document.getElementById('deleteProfileBtn').style.display="block";
+  renderAvatarPick();
+  go('profileForm');
+}
+function renderAvatarPick(){
+  const box = document.getElementById('avatarPick'); box.innerHTML="";
+  AVATARS.forEach(a=>{
+    const s = document.createElement('span');
+    s.textContent=a; if(a===pickedAvatar) s.className='sel';
+    s.onclick=()=>{ pickedAvatar=a; renderAvatarPick(); };
+    box.appendChild(s);
+  });
+  // Add-your-own-photo tile
+  const up = document.createElement('span');
+  up.className = 'upload' + (isImg(pickedAvatar)?' sel':'');
+  up.title = 'Add photo';
+  up.innerHTML = isImg(pickedAvatar) ? `<img src="${pickedAvatar}" alt=""/>` : '📷';
+  up.onclick = ()=>document.getElementById('avatarFile').click();
+  box.appendChild(up);
+}
+function saveProfile(){
+  const name = document.getElementById('fName').value.trim();
+  if(!name){ document.getElementById('fName').focus(); return; }
+  const age = document.getElementById('fAge').value;
+  const lang = document.getElementById('fLang').value;
+  if(editingId){
+    const p = store.profiles.find(x=>x.id===editingId);
+    Object.assign(p,{name,age,lang,avatar:pickedAvatar});
+  } else {
+    store.profiles.push({id:'p'+Date.now(),name,age,lang,avatar:pickedAvatar,progress:{}});
+  }
+  save(); go('profiles');
+}
+function delProfile(id){
+  store.profiles = store.profiles.filter(p=>p.id!==id);
+  if(store.currentId===id) store.currentId=null;
+  save(); renderProfiles();
+}
+function confirmDelete(){
+  const p = store.profiles.find(x=>x.id===editingId); if(!p) return;
+  askConfirm('"'+p.name+'" ko delete karein?\nYe wapas nahi aayega.', ()=>{
+    delProfile(editingId);
+    editingId=null;
+    go('profiles');
+  });
+}
+/* ---- custom confirm (native confirm() is blocked in app webview) ---- */
+let _confirmCb=null;
+function askConfirm(msg, cb, opt){
+  opt = opt||{};
+  document.getElementById('confirmMsg').textContent = msg;
+  document.querySelector('.modal-emoji').textContent = opt.emoji || '🗑️';
+  const yes=document.getElementById('confirmYes');
+  const no=document.querySelector('.modal-btns .btn.ghost');
+  if(opt.info){                      // info popup: single OK button
+    yes.textContent='OK';
+    yes.classList.remove('coral'); yes.classList.add('gold');
+    no.style.display='none';
+  } else {                           // destructive confirm
+    yes.textContent='Delete';
+    yes.classList.remove('gold'); yes.classList.add('coral');
+    no.style.display='';
+  }
+  _confirmCb = cb;
+  document.getElementById('confirmModal').classList.add('show');
+}
+function closeConfirm(){
+  document.getElementById('confirmModal').classList.remove('show');
+  _confirmCb = null;
+}
+document.getElementById('confirmYes').onclick = ()=>{
+  const cb=_confirmCb; closeConfirm(); if(cb) cb();
+};
+document.getElementById('confirmModal').onclick = (e)=>{
+  if(e.target.id==='confirmModal') closeConfirm();
+};
+
+/* ---- Select + greet ---- */
+function selectProfile(id){
+  store.currentId=id; save();
+  const p = currentProfile();
+  document.getElementById('greetName').textContent = p.name + "!";
+  go('greet');
+  const m = document.getElementById('greet-mascot');
+  m.classList.remove('cheer'); void m.offsetWidth; m.classList.add('cheer');
+  confetti();
+  setTimeout(()=>speak("السلام عليكم "+p.name), 350);
+}
+
+/* ---- Menu ---- */
+function renderMenu(){
+  const p = currentProfile(); if(!p){ go('profiles'); return; }
+  document.getElementById('menuName').textContent = p.name;
+  document.getElementById('menuAvatar').innerHTML = avatarInner(p.avatar);
+}
+
+/* ============================================================
+   6. QAIDA HUB + LESSON ENGINE
+   ============================================================ */
+const HK={a:'\u064E', i:'\u0650', u:'\u064F'};  // zabar, zer, pesh
+
+function openQaidaHub(){
+  const p=currentProfile();
+  const prog=(p&&p.progress)||{};
+  const wrap=document.getElementById('hubGrid');
+  wrap.innerHTML='';
+  QAIDA_CONFIG.lessons.forEach((L,i)=>{
+    const done=!!prog[L.id];
+    const c=document.createElement('div');
+    c.className='hub-card'+(done?' done':'');
+    c.innerHTML=`<div class="hub-ic">${L.icon||'📖'}</div>
+      <div class="hub-tt">${escapeHtml(langText(L.title))}</div>
+      ${done?'<div class="hub-done">✓</div>':`<div class="hub-no">${i+1}</div>`}`;
+    c.onclick=()=>startLesson(L.id);
+    wrap.appendChild(c);
+  });
+  if(QAIDA_CONFIG.quiz && QAIDA_CONFIG.quiz.length){
+    const done=!!prog['quiz'];
+    const c=document.createElement('div');
+    c.className='hub-card quiz'+(done?' done':'');
+    c.innerHTML=`<div class="hub-ic">❓</div><div class="hub-tt">Sawal-Jawab</div>
+      ${done?'<div class="hub-done">✓</div>':'<div class="hub-no">🏁</div>'}`;
+    c.onclick=()=>startQuiz();
+    wrap.appendChild(c);
+  }
+  go('qaidaHub');
+}
+
+function startLesson(id){
+  const L=QAIDA_CONFIG.lessons.find(x=>x.id===id); if(!L) return;
+  lesson.steps=[]; lesson.lessonId=L.id;
+  if(L.type==='letters'){
+    QAIDA_CONFIG.opening.forEach(o=>lesson.steps.push({type:'phrase',arabic:o.arabic,hint:o.hint,audio:o.audio}));
+    L.items.forEach(it=>lesson.steps.push({type:'letter',letter:it.letter,name:it.name,visual:it.visual,mnemonic:it.mnemonic,audio:it.audio}));
+  } else if(L.type==='harakat'){
+    lesson.steps.push({type:'rule',ruleText:L.intro,title:L.title});
+    L.items.forEach(it=>lesson.steps.push({type:'harakat',letter:it.letter,name:it.name,audio:it.audio}));
+  } else if(L.type==='joined'){
+    lesson.steps.push({type:'rule',ruleText:L.intro,title:L.title});
+    L.items.forEach(it=>lesson.steps.push({type:'joined',arabic:it.arabic,tr:it.tr,audio:it.audio}));
+  } else if(L.type==='rule'){
+    lesson.steps.push({type:'rule',ruleText:L.rule,title:L.title});
+    L.items.forEach(it=>lesson.steps.push({type:'example',arabic:it.arabic,tr:it.tr,audio:it.audio}));
+  }
+  lesson.index=0;
+  document.getElementById('qTitle').textContent=langText(L.title);
+  go('qaida');
+  renderStep();
+}
+
+function renderStep(){
+  const s=lesson.steps[lesson.index];
+  const stage=document.getElementById('qStage');
+  const lang=(currentProfile()?.lang)||'ur';
+
+  const dots=document.getElementById('qDots'); dots.innerHTML='';
+  lesson.steps.forEach((_,i)=>{ const d=document.createElement('div');
+    d.className='dot'+(i<lesson.index?' done':'')+(i===lesson.index?' now':''); dots.appendChild(d); });
+
+  let inner=`<button class="speaker" onclick="event.stopPropagation();playCurrent()">🔊</button>`;
+  if(s.type==='phrase'){
+    inner+=`<div class="kicker">${lesson.index===0?"Let's begin 🌙":'Bismillah'}</div>
+      <div class="big-phrase arabic">${s.arabic}</div>
+      <div class="mnemonic"><span class="mtext ${lang==='ur'?'urdu':''}">${escapeHtml(langText(s.hint))}</span></div>
+      <div class="tap-hint">Tap anywhere to hear 🔊</div>`;
+  } else if(s.type==='letter'){
+    inner+=`<div class="kicker">Letter</div>
+      <div class="big-letter">${s.letter}</div>
+      <div class="letter-name">${s.name}</div>
+      <div class="mnemonic"><span class="em">${s.visual}</span>
+        <span class="mtext ${lang==='ur'?'urdu':''}">${escapeHtml(langText(s.mnemonic))}</span></div>
+      <div class="tap-hint">Tap the letter to hear it 🔊</div>`;
+  } else if(s.type==='rule'){
+    inner+=`<div class="kicker">${escapeHtml(langText(s.title))}</div>
+      <div class="rule-text ${lang==='ur'?'urdu':''}">${escapeHtml(langText(s.ruleText))}</div>
+      <div class="tap-hint">Next › se aage barho</div>`;
+  } else if(s.type==='harakat'){
+    inner+=`<div class="kicker">${s.name} — zabar · zer · pesh</div>
+      <div class="harakat-row">
+        <div class="hk" onclick="event.stopPropagation();speak('${s.letter+HK.a}')"><div class="hk-l">${s.letter+HK.a}</div><div class="hk-s">a</div></div>
+        <div class="hk" onclick="event.stopPropagation();speak('${s.letter+HK.i}')"><div class="hk-l">${s.letter+HK.i}</div><div class="hk-s">i</div></div>
+        <div class="hk" onclick="event.stopPropagation();speak('${s.letter+HK.u}')"><div class="hk-l">${s.letter+HK.u}</div><div class="hk-s">u</div></div>
+      </div>
+      <div class="tap-hint">Har khaana tap karke suno 🔊</div>`;
+  } else { // joined or example
+    inner+=`<div class="kicker">${s.type==='joined'?'Read it':'Example'}</div>
+      <div class="big-phrase arabic">${s.arabic}</div>
+      <div class="letter-name" style="font-size:1.05rem;color:var(--ink-soft)">${escapeHtml(s.tr||'')}</div>
+      <div class="tap-hint">Tap to hear it 🔊</div>`;
+  }
+  stage.innerHTML=inner;
+
+  document.getElementById('prevBtn').disabled=lesson.index===0;
+  document.getElementById('nextBtn').textContent=(lesson.index===lesson.steps.length-1)?"Finish 🎉":"Next ›";
+  setTimeout(playCurrent,250);
+}
+
+function playCurrent(){
+  const s=lesson.steps[lesson.index]; if(!s) return;
+  const st=document.getElementById('qStage');
+  st.animate([{transform:'scale(1)'},{transform:'scale(1.02)'},{transform:'scale(1)'}],{duration:260});
+  if(s.type==='phrase'||s.type==='joined'||s.type==='example') sayIt(s.arabic, s.audio);
+  else if(s.type==='letter') sayIt(s.letter, s.audio);
+  else if(s.type==='harakat') sayIt(s.letter+HK.a, s.audio);
+  // rule step: no audio
+}
+function nextStep(){ if(lesson.index<lesson.steps.length-1){ lesson.index++; renderStep(); } else finishLesson(); }
+function prevStep(){ if(lesson.index>0){ lesson.index--; renderStep(); } }
+
+function finishLesson(){
+  const p=currentProfile();
+  if(p){ p.progress=p.progress||{}; p.progress[lesson.lessonId]=true; save(); }
+  showReward("Shabash, "+(p?.name||'Dost')+"! 🎉","Lesson complete!");
+}
+
+/* ---- Quiz (Sawal-Jawab) ---- */
+let quizState={items:[],index:0,score:0};
+function startQuiz(){
+  quizState={items:QAIDA_CONFIG.quiz.slice(), index:0, score:0};
+  go('quiz'); renderQuiz();
+}
+function renderQuiz(){
+  const q=quizState.items[quizState.index];
+  const lang=(currentProfile()?.lang)||'ur';
+  document.getElementById('quizProgress').textContent=(quizState.index+1)+' / '+quizState.items.length;
+  const box=document.getElementById('quizBox');
+  box.innerHTML=`
+    <div class="q-text ${lang==='ur'?'urdu':''}">${escapeHtml(langText(q.q))}</div>
+    ${q.show?`<div class="q-show arabic" onclick="speak('${q.show}')">${q.show}</div>`:''}
+    <div class="q-options" id="qOptions"></div>`;
+  const opts=document.getElementById('qOptions');
+  q.options.forEach((o,i)=>{
+    const b=document.createElement('button'); b.className='q-opt'; b.textContent=o;
+    b.onclick=()=>answerQuiz(i,b);
+    opts.appendChild(b);
+  });
+  if(q.show) setTimeout(()=>speak(q.show),300);
+}
+function answerQuiz(i,btn){
+  if(document.querySelector('.q-opt.locked')) return;
+  const q=quizState.items[quizState.index];
+  const opts=document.querySelectorAll('.q-opt');
+  opts.forEach(o=>o.classList.add('locked'));
+  if(i===q.answer){ btn.classList.add('correct'); quizState.score++; confetti(false); }
+  else{ btn.classList.add('wrong'); opts[q.answer].classList.add('correct'); }
+  setTimeout(()=>{
+    if(quizState.index<quizState.items.length-1){ quizState.index++; renderQuiz(); }
+    else finishQuiz();
+  },1150);
+}
+function finishQuiz(){
+  const p=currentProfile();
+  if(p){ p.progress=p.progress||{}; p.progress['quiz']=true; save(); }
+  showReward("MashaAllah! 🌟","Score: "+quizState.score+" / "+quizState.items.length);
+}
+
+let _rewardBack='qaidaHub';
+function rewardBack(){ if(_rewardBack==='hifz') openHifz(); else if(_rewardBack==='menu') go('menu'); else openQaidaHub(); }
+function showReward(title,sub,back){
+  _rewardBack = back || 'qaidaHub';
+  document.getElementById('rewardTitle').textContent=title;
+  document.getElementById('rewardSub').textContent=sub;
+  go('reward');
+  confetti(true);
+  const p=currentProfile();
+  setTimeout(()=>speak((p?.name||'')+" ما شاء الله"),300);
+}
+
+/* ============================================================
+   6b. GAME — Huroof Hunt (find the letter you hear)
+   ============================================================ */
+let game={round:0,total:10,points:0,perfect:0,combo:0,tries:0,target:null,letters:[]};
+function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+
+function startGame(){
+  game={round:0,total:10,points:0,perfect:0,combo:0,tries:0,target:null,
+    letters:QAIDA_CONFIG.lessons[0].items.slice()};
+  document.getElementById('gamePlay').style.display='';
+  document.getElementById('gameResult').style.display='none';
+  go('game');
+  nextRound();
+}
+function nextRound(){
+  if(game.round>=game.total){ showGameResult(); return; }
+  game.round++; game.tries=0;
+  const all=game.letters;
+  game.target=all[Math.floor(Math.random()*all.length)];
+  const others=shuffle(all.filter(x=>x.letter!==game.target.letter)).slice(0,5);
+  const choices=shuffle(others.concat([game.target]));
+  document.getElementById('gRound').textContent='Round '+game.round+'/'+game.total;
+  document.getElementById('gCombo').textContent='🔥 '+game.combo;
+  document.getElementById('gScore').textContent='⭐ '+game.points;
+  document.getElementById('gTarget').textContent=game.target.name;
+  const wrap=document.getElementById('bubbles'); wrap.innerHTML='';
+  const cols=['#0E7C66','#E7A928','#FF6F61','#6B46C1','#1AA184','#3B82C4'];
+  choices.forEach((c,i)=>{
+    const b=document.createElement('div'); b.className='bubble';
+    b.style.background=cols[i%cols.length];
+    b.style.animationDelay=(i*0.18)+'s';
+    b.textContent=c.letter;
+    b.onclick=()=>tapBubble(c,b);
+    wrap.appendChild(b);
+  });
+  setTimeout(playGameTarget,300);
+}
+function playGameTarget(){ if(game.target) speak(game.target.letter); }
+function tapBubble(c,el){
+  if(el.classList.contains('pop')) return;
+  if(c.letter===game.target.letter){
+    el.classList.add('pop');
+    game.points += (game.tries===0?10:5);
+    if(game.tries===0){ game.perfect++; game.combo++; } else { game.combo=0; }
+    speak(game.target.letter); confetti(false);
+    document.getElementById('gScore').textContent='⭐ '+game.points;
+    document.getElementById('gCombo').textContent='🔥 '+game.combo;
+    document.querySelectorAll('.bubble').forEach(b=>b.style.pointerEvents='none');
+    setTimeout(nextRound,700);
+  } else {
+    game.tries++; game.combo=0;
+    el.classList.add('shake'); setTimeout(()=>el.classList.remove('shake'),400);
+    document.getElementById('gCombo').textContent='🔥 0';
+  }
+}
+function showGameResult(){
+  const stars = game.perfect>=8?3 : game.perfect>=5?2 : 1;
+  const p=currentProfile();
+  if(p){ p.progress=p.progress||{}; p.progress['game']=true; save(); }
+  document.getElementById('gamePlay').style.display='none';
+  const r=document.getElementById('gameResult'); r.style.display='';
+  r.innerHTML=`
+    <div style="text-align:center;padding:24px 10px">
+      <div style="font-size:64px;letter-spacing:4px">${'⭐'.repeat(stars)}${'☆'.repeat(3-stars)}</div>
+      <div class="reward-title">${stars===3?'MashaAllah!':'Shabash!'} 🎉</div>
+      <div class="sub">Score: ⭐ ${game.points} &nbsp;·&nbsp; Perfect: ${game.perfect}/${game.total}</div>
+      <button class="btn gold block" style="margin-top:18px" onclick="startGame()">Play again 🔁</button>
+      <button class="btn ghost block" style="margin-top:10px" onclick="go('menu')">Back to menu 🏠</button>
+    </div>`;
+  confetti(true);
+  setTimeout(()=>speak((p?.name||'')+" ما شاء الله"),300);
+}
+
+/* ============================================================
+   6c. NAZRA READER  (Al Quran Cloud API — free, no key)
+   ============================================================ */
+const QAPI='https://api.alquran.cloud/v1';
+let surahs=[];                 // 114 surah meta
+let nz={ surah:null, ayahs:[], playing:-1, auto:false, repeat:1, left:0 };
+let audioEl=new Audio();
+let settings=loadSettings();
+
+function loadSettings(){
+  try{ return JSON.parse(localStorage.getItem('misbah.reader'))||{reciter:'ar.husary',font:32}; }
+  catch(e){ return {reciter:'ar.husary',font:32}; }
+}
+function saveSettings(){ localStorage.setItem('misbah.reader', JSON.stringify(settings)); }
+function openReaderSettings(){
+  document.getElementById('reciterSel').value=settings.reciter;
+  document.getElementById('readerSettings').classList.add('show');
+}
+function setReciter(v){ settings.reciter=v; saveSettings(); if(nz.surah) loadSurah(nz.surah.number, true); }
+function setFont(d){
+  settings.font=Math.max(20,Math.min(56,settings.font+d)); saveSettings();
+  document.querySelectorAll('.ayah-ar').forEach(e=>e.style.fontSize=settings.font+'px');
+}
+
+/* ---- cache helper (offline-friendly) ---- */
+function cacheGet(k){ try{ return JSON.parse(localStorage.getItem('misbah.q.'+k)); }catch(e){ return null; } }
+function cacheSet(k,v){ try{ localStorage.setItem('misbah.q.'+k, JSON.stringify(v)); }catch(e){/* quota */} }
+
+/* ---- surah list ---- */
+async function openNazra(){
+  go('nazra');
+  renderLastRead();
+  if(!surahs.length){
+    const cached=cacheGet('surahs');
+    if(cached){ surahs=cached; renderSurahList(); }
+    else{
+      try{
+        const r=await fetch(QAPI+'/surah'); const j=await r.json();
+        surahs=j.data; cacheSet('surahs',surahs);
+      }catch(e){
+        document.getElementById('surahList').innerHTML='<div class="loading">Internet nahi hai 😕<br>Pehli baar surah list ke liye internet chahiye.</div>';
+        return;
+      }
+    }
+  }
+  renderSurahList();
+}
+function renderSurahList(){
+  const q=(document.getElementById('surahSearch').value||'').trim().toLowerCase();
+  const wrap=document.getElementById('surahList');
+  const list=surahs.filter(s=> !q || s.englishName.toLowerCase().includes(q) ||
+      String(s.number)===q || (s.englishNameTranslation||'').toLowerCase().includes(q));
+  if(!list.length){ wrap.innerHTML='<div class="loading">Koi surah nahi mili</div>'; return; }
+  wrap.innerHTML='';
+  list.forEach(s=>{
+    const d=document.createElement('div'); d.className='surah-row';
+    d.innerHTML=`<div class="s-no">${s.number}</div>
+      <div class="s-mid"><div class="s-name">${escapeHtml(s.englishName)}</div>
+        <div class="s-sub">${escapeHtml(s.englishNameTranslation||'')} · ${s.numberOfAyahs} ayah</div></div>
+      <div class="s-ar">${s.name}</div>`;
+    d.onclick=()=>loadSurah(s.number);
+    wrap.appendChild(d);
+  });
+}
+function renderLastRead(){
+  const p=currentProfile();
+  const lr=p&&p.lastRead;
+  const box=document.getElementById('lastRead');
+  if(!lr){ box.innerHTML=''; return; }
+  box.innerHTML=`<div class="last-read" onclick="loadSurah(${lr.surah},false,${lr.ayah})">
+      <div class="lr-t">📖 Jahan chhoda tha</div>
+      <div class="lr-n">${escapeHtml(lr.name)} · Ayah ${lr.ayah+1}</div></div>`;
+}
+
+/* ---- load & render a surah ---- */
+async function loadSurah(n, silent, jumpTo){
+  stopAudio();
+  const key='s'+n+'.'+settings.reciter;
+  go('reader');
+  document.getElementById('ayahList').innerHTML='<div class="loading">Loading… ⏳</div>';
+  let data=cacheGet(key);
+  if(!data){
+    try{
+      const r=await fetch(QAPI+'/surah/'+n+'/editions/quran-uthmani,'+settings.reciter);
+      const j=await r.json();
+      const text=j.data[0], aud=j.data[1];
+      data={ number:text.number, name:text.name, englishName:text.englishName,
+             ayahs:text.ayahs.map((a,i)=>({ n:a.numberInSurah, text:a.text, audio:(aud.ayahs[i]||{}).audio })) };
+      cacheSet(key,data);
+    }catch(e){
+      document.getElementById('ayahList').innerHTML='<div class="loading">Load nahi hua 😕<br>Internet check karein.</div>';
+      return;
+    }
+  }
+  nz.surah={number:data.number,name:data.englishName};
+  nz.ayahs=data.ayahs; nz.playing=-1;
+  document.getElementById('rTitle').textContent=data.englishName+' · '+data.name;
+  renderAyahs(n);
+  if(typeof jumpTo==='number'){
+    setTimeout(()=>{ const el=document.getElementById('ay'+jumpTo); if(el) el.scrollIntoView({block:'center'}); },200);
+  }
+}
+function renderAyahs(n){
+  const wrap=document.getElementById('ayahList');
+  wrap.innerHTML='';
+  // Bismillah header (all surahs except 1 and 9 — surah 1 already has it as ayah 1)
+  if(n!==1 && n!==9){
+    const b=document.createElement('div'); b.className='bismillah';
+    b.textContent='بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ';
+    wrap.appendChild(b);
+  }
+  nz.ayahs.forEach((a,i)=>{
+    const d=document.createElement('div'); d.className='ayah'; d.id='ay'+i;
+    d.innerHTML=`<div class="ayah-ar" style="font-size:${settings.font}px">${a.text}</div>
+      <div class="ayah-no">${a.n}</div>`;
+    d.onclick=()=>playFrom(i);
+    wrap.appendChild(d);
+  });
+}
+
+/* ---- audio playback ---- */
+function playFrom(i){
+  if(i>=nz.ayahs.length){ stopAudio(); return; }
+  const a=nz.ayahs[i];
+  if(!a.audio){ return; }
+  nz.playing=i; nz.left=nz.repeat;
+  markPlaying(i);
+  saveLastRead(i);
+  audioEl.onended=nazraEnded;          // (re)claim the handler — hifz may have changed it
+  audioEl.src=a.audio;
+  audioEl.play().catch(()=>{});
+}
+function nazraEnded(){
+  if(nz.playing<0) return;
+  nz.left--;
+  if(nz.left>0){ audioEl.currentTime=0; audioEl.play().catch(()=>{}); return; }  // repeat same ayah
+  if(nz.auto && nz.playing<nz.ayahs.length-1){ playFrom(nz.playing+1); }
+  else{ stopAudio(); }
+}
+audioEl.onended=nazraEnded;
+function markPlaying(i){
+  document.querySelectorAll('.ayah').forEach(e=>e.classList.remove('playing'));
+  const el=document.getElementById('ay'+i);
+  if(el){ el.classList.add('playing'); el.scrollIntoView({behavior:'smooth',block:'center'}); }
+}
+function stopAudio(){
+  try{ audioEl.pause(); }catch(e){}
+  nz.playing=-1;
+  document.querySelectorAll('.ayah').forEach(e=>e.classList.remove('playing'));
+}
+function toggleAuto(){
+  nz.auto=!nz.auto;
+  const b=document.getElementById('rbAuto');
+  b.textContent='🔁 Auto: '+(nz.auto?'on':'off');
+  b.classList.toggle('on',nz.auto);
+}
+function cycleRepeat(){
+  nz.repeat = nz.repeat===1?3 : nz.repeat===3?5 : 1;
+  const b=document.getElementById('rbRep');
+  b.textContent='Repeat: '+nz.repeat+'x';
+  b.classList.toggle('on',nz.repeat>1);
+}
+function saveLastRead(i){
+  const p=currentProfile(); if(!p||!nz.surah) return;
+  p.lastRead={surah:nz.surah.number,name:nz.surah.name,ayah:i};
+  save();
+}
+
+/* ============================================================
+   6d. HIFZ MODE  (hide → recall → check → repeat)
+   Progress per profile: p.hifz = { "2:255": {known:bool, reps:n, last:ts} }
+   ============================================================ */
+let hz={ list:[], index:0, hidden:true, repeat:5, left:0, mode:'sabaq', surahName:'' };
+const DAY=86400000;
+
+function hifzData(){
+  const p=currentProfile(); if(!p) return {};
+  p.hifz=p.hifz||{}; return p.hifz;
+}
+function openHifz(){
+  stopAudio();
+  const H=hifzData();
+  const keys=Object.keys(H);
+  const known=keys.filter(k=>H[k].known);
+  const now=Date.now();
+  // Sabqi = known in last 7 days; Manzil = known older than 7 days
+  const sabqi=known.filter(k=> now-(H[k].last||0) <= 7*DAY );
+  const manzil=known.filter(k=> now-(H[k].last||0) > 7*DAY );
+  document.getElementById('hifzStats').innerHTML=
+    `<div class="hifz-stat">
+       <div><b>${known.length}</b><span>Ayat yaad</span></div>
+       <div><b>${sabqi.length}</b><span>Sabqi</span></div>
+       <div><b>${manzil.length}</b><span>Manzil</span></div>
+     </div>`;
+  document.getElementById('sabqiCount').textContent = sabqi.length? sabqi.length+' ayat revision ke liye' : 'Abhi kuch nahi';
+  document.getElementById('manzilCount').textContent = manzil.length? manzil.length+' ayat purani revision' : 'Abhi kuch nahi';
+  document.getElementById('hifzListHead').style.display='none';
+  document.getElementById('hifzSearch').style.display='none';
+  document.getElementById('hifzSurahList').innerHTML='';
+  go('hifz');
+}
+
+/* ---- Sabaq: pick a surah ---- */
+async function pickHifzSurah(){
+  document.getElementById('hifzListHead').style.display='';
+  document.getElementById('hifzSearch').style.display='';
+  if(!surahs.length){
+    const cached=cacheGet('surahs');
+    if(cached) surahs=cached;
+    else{
+      document.getElementById('hifzSurahList').innerHTML='<div class="loading">Loading… ⏳</div>';
+      try{ const r=await fetch(QAPI+'/surah'); surahs=(await r.json()).data; cacheSet('surahs',surahs); }
+      catch(e){ document.getElementById('hifzSurahList').innerHTML='<div class="loading">Internet chahiye 😕</div>'; return; }
+    }
+  }
+  renderHifzSurahs();
+}
+function renderHifzSurahs(){
+  const q=(document.getElementById('hifzSearch').value||'').trim().toLowerCase();
+  const wrap=document.getElementById('hifzSurahList');
+  // short surahs first — best for kids starting hifz
+  const list=surahs.filter(s=> !q || s.englishName.toLowerCase().includes(q) || String(s.number)===q)
+                   .sort((a,b)=> q? 0 : (a.numberOfAyahs-b.numberOfAyahs));
+  const H=hifzData();
+  wrap.innerHTML='';
+  list.forEach(s=>{
+    const done=Array.from({length:s.numberOfAyahs},(_,i)=>H[s.number+':'+(i+1)]).filter(x=>x&&x.known).length;
+    const d=document.createElement('div'); d.className='surah-row';
+    d.innerHTML=`<div class="s-no">${s.number}</div>
+      <div class="s-mid"><div class="s-name">${escapeHtml(s.englishName)}</div>
+        <div class="s-sub">${s.numberOfAyahs} ayah${done?` · ✅ ${done} yaad`:''}</div></div>
+      <div class="s-ar">${s.name}</div>`;
+    d.onclick=()=>startSabaq(s.number);
+    wrap.appendChild(d);
+  });
+}
+
+/* ---- start memorizing a surah ---- */
+async function startSabaq(n){
+  const key='s'+n+'.'+settings.reciter;
+  go('memorize');
+  document.getElementById('memAr').textContent='Loading… ⏳';
+  let data=cacheGet(key);
+  if(!data){
+    try{
+      const r=await fetch(QAPI+'/surah/'+n+'/editions/quran-uthmani,'+settings.reciter);
+      const j=await r.json(); const text=j.data[0], aud=j.data[1];
+      data={ number:text.number, name:text.name, englishName:text.englishName,
+             ayahs:text.ayahs.map((a,i)=>({n:a.numberInSurah,text:a.text,audio:(aud.ayahs[i]||{}).audio})) };
+      cacheSet(key,data);
+    }catch(e){ document.getElementById('memAr').textContent='Load nahi hua 😕'; return; }
+  }
+  hz.mode='sabaq'; hz.surahName=data.englishName;
+  hz.list=data.ayahs.map(a=>({key:n+':'+a.n, text:a.text, audio:a.audio, label:data.englishName+' '+a.n}));
+  hz.index=0; hz.hidden=true;
+  renderMem();
+}
+
+/* ---- Sabqi / Manzil review ---- */
+function startReview(mode){
+  const H=hifzData(); const now=Date.now();
+  const keys=Object.keys(H).filter(k=>H[k].known).filter(k=>{
+    const age=now-(H[k].last||0);
+    return mode==='sabqi' ? age<=7*DAY : age>7*DAY;
+  });
+  if(!keys.length){ alertBox(mode==='sabqi'?'Sabqi khali hai':'Manzil khali hai','Pehle Sabaq se kuch ayat yaad karein.'); return; }
+  hz.mode=mode; hz.surahName=(mode==='sabqi'?'Sabqi 🔁':'Manzil 📚');
+  hz.list=keys.map(k=>({key:k, text:H[k].text||'', audio:H[k].audio||'', label:(H[k].label||k)}));
+  hz.index=0; hz.hidden=true;
+  go('memorize'); renderMem();
+}
+function alertBox(t,s){ askConfirm(t+'\n'+s, null, {info:true, emoji:'🧠'}); }
+
+/* ---- memorize UI ---- */
+function renderMem(){
+  const a=hz.list[hz.index]; if(!a) return;
+  const H=hifzData();
+  document.getElementById('mTitle').textContent = hz.surahName;
+  document.getElementById('mCount').textContent = (hz.index+1)+' / '+hz.list.length;
+  const ar=document.getElementById('memAr');
+  ar.textContent = a.text || '—';
+  ar.classList.toggle('hidden-text', hz.hidden);
+  document.getElementById('memTap').textContent = hz.hidden ? '👆 Zubani parho, phir tap karke check karo' : '✓ Ab dekh kar milao';
+  document.getElementById('mHideBtn').textContent = hz.hidden ? '👁 Dekho' : '🙈 Hide';
+  document.getElementById('memAyah').classList.toggle('known', !!(H[a.key]&&H[a.key].known));
+  document.getElementById('mRepBtn').textContent = 'Repeat: '+hz.repeat+'x';
+}
+function toggleHide(){ hz.hidden=!hz.hidden; renderMem(); }
+function cycleMemRepeat(){ hz.repeat = hz.repeat===5?10 : hz.repeat===10?20 : 5; renderMem(); }
+
+function playMemAyah(){
+  const a=hz.list[hz.index]; if(!a||!a.audio) return;
+  hz.left=hz.repeat;
+  audioEl.onended=()=>{
+    hz.left--;
+    if(hz.left>0){ audioEl.currentTime=0; audioEl.play().catch(()=>{}); }
+  };
+  audioEl.src=a.audio;
+  audioEl.play().catch(()=>{});
+}
+function markAyah(known){
+  const a=hz.list[hz.index]; if(!a) return;
+  const p=currentProfile(); if(!p) return;
+  p.hifz=p.hifz||{};
+  const rec=p.hifz[a.key]||{reps:0};
+  rec.known=known; rec.reps=(rec.reps||0)+1; rec.last=Date.now();
+  rec.text=a.text; rec.audio=a.audio; rec.label=a.label;
+  p.hifz[a.key]=rec; save();
+  if(known) confetti(false);
+  memNext();
+}
+function memNext(){
+  stopAudio();
+  if(hz.index < hz.list.length-1){ hz.index++; hz.hidden=true; renderMem(); }
+  else finishHifz();
+}
+function memPrev(){
+  stopAudio();
+  if(hz.index>0){ hz.index--; hz.hidden=true; renderMem(); }
+}
+function finishHifz(){
+  const H=hifzData();
+  const done=hz.list.filter(a=>H[a.key]&&H[a.key].known).length;
+  showReward('MashaAllah! 🌟', done+' / '+hz.list.length+' ayat yaad', 'hifz');
+}
+
+/* ============================================================
+   6e. DUAS & SALAH
+   ============================================================ */
+let dua={index:0};
+function openDuas(){
+  const p=currentProfile(); const done=(p&&p.duasDone)||{};
+  const wrap=document.getElementById('duaList'); wrap.innerHTML='';
+  DUAS.forEach((d,i)=>{
+    const row=document.createElement('div'); row.className='surah-row';
+    row.innerHTML=`<div class="s-no">${d.icon}</div>
+      <div class="s-mid"><div class="s-name">${escapeHtml(langText(d.title))}</div>
+        <div class="s-sub">${escapeHtml(d.tr)}</div></div>
+      ${done[d.id]?'<div class="done-tick">✓</div>':''}`;
+    row.onclick=()=>openDua(i);
+    wrap.appendChild(row);
+  });
+  go('duas');
+}
+function openDua(i){
+  dua.index=i; go('duaCard'); renderDua();
+}
+function renderDua(){
+  const d=DUAS[dua.index];
+  const lang=(currentProfile()?.lang)||'ur';
+  document.getElementById('dTitle').textContent=langText(d.title);
+  document.getElementById('dCount').textContent=(dua.index+1)+' / '+DUAS.length;
+  document.getElementById('dStage').innerHTML=`
+    <button class="speaker" onclick="event.stopPropagation();playDua()">🔊</button>
+    <div style="font-size:44px">${d.icon}</div>
+    <div class="big-phrase arabic">${d.arabic}</div>
+    <div class="letter-name" style="font-size:.95rem;color:var(--ink-soft)">${escapeHtml(d.tr)}</div>
+    <div class="mnemonic"><span class="mtext ${lang==='ur'?'urdu':''}">${escapeHtml(langText(d.mean))}</span></div>
+    <div class="tap-hint">Tap karke suno 🔊</div>`;
+  document.getElementById('dPrev').disabled=dua.index===0;
+  document.getElementById('dNext').textContent=(dua.index===DUAS.length-1)?'Finish 🎉':'Next ›';
+  // mark as seen
+  const p=currentProfile();
+  if(p){ p.duasDone=p.duasDone||{}; p.duasDone[d.id]=true; save(); }
+  setTimeout(playDua,250);
+}
+function playDua(){ const d=DUAS[dua.index]; sayIt(d.arabic, d.audio); }
+function duaNext(){
+  if(dua.index<DUAS.length-1){ dua.index++; renderDua(); }
+  else showReward('MashaAllah! 🌟','Saari duain complete!','menu');
+}
+function duaPrev(){ if(dua.index>0){ dua.index--; renderDua(); } }
+
+/* ---- Salah guide ---- */
+let sl={index:0};
+function openSalah(){ sl.index=0; go('salah'); renderSalah(); }
+function renderSalah(){
+  const s=SALAH_STEPS[sl.index];
+  const lang=(currentProfile()?.lang)||'ur';
+  document.getElementById('slCount').textContent=(sl.index+1)+' / '+SALAH_STEPS.length;
+  const dots=document.getElementById('slDots'); dots.innerHTML='';
+  SALAH_STEPS.forEach((_,i)=>{ const d=document.createElement('div');
+    d.className='dot'+(i<sl.index?' done':'')+(i===sl.index?' now':''); dots.appendChild(d); });
+  document.getElementById('slStage').innerHTML=`
+    ${s.arabic?`<button class="speaker" onclick="event.stopPropagation();playSalah()">🔊</button>`:''}
+    <div style="font-size:52px">${s.icon}</div>
+    <div class="letter-name" style="font-size:1.3rem">${escapeHtml(langText(s.title))}</div>
+    ${s.arabic?`<div class="big-phrase arabic" style="font-size:2.2rem">${s.arabic}</div>`:''}
+    <div class="mnemonic"><span class="mtext ${lang==='ur'?'urdu':''}">${escapeHtml(langText(s.say))}</span></div>`;
+  document.getElementById('slPrev').disabled=sl.index===0;
+  document.getElementById('slNext').textContent=(sl.index===SALAH_STEPS.length-1)?'Finish 🎉':'Next ›';
+  if(s.arabic) setTimeout(playSalah,250);
+}
+function playSalah(){ const s=SALAH_STEPS[sl.index]; if(s.arabic) sayIt(s.arabic, s.audio); }
+function salahNext(){
+  if(sl.index<SALAH_STEPS.length-1){ sl.index++; renderSalah(); }
+  else{
+    const p=currentProfile();
+    if(p){ p.progress=p.progress||{}; p.progress['salah']=true; save(); }
+    showReward('MashaAllah! 🌟','Namaz ke saare steps seekh liye!','menu');
+  }
+}
+function salahPrev(){ if(sl.index>0){ sl.index--; renderSalah(); } }
+
+/* ============================================================
+   6f. MY PROGRESS
+   ============================================================ */
+function openProgress(){
+  const p=currentProfile(); if(!p){ go('profiles'); return; }
+  const prog=p.progress||{};
+  const H=p.hifz||{};
+  const hifzKnown=Object.keys(H).filter(k=>H[k].known).length;
+  const duasSeen=Object.keys(p.duasDone||{}).length;
+  const lessonsDone=QAIDA_CONFIG.lessons.filter(L=>prog[L.id]).length;
+  const totalLessons=QAIDA_CONFIG.lessons.length;
+  const pct=Math.round(lessonsDone/totalLessons*100);
+
+  // stars: qaida lessons + quiz + game + salah + hifz
+  let stars=lessonsDone + (prog.quiz?1:0) + (prog.game?1:0) + (prog.salah?1:0) + Math.floor(hifzKnown/5);
+
+  const rows=[
+    ...QAIDA_CONFIG.lessons.map(L=>({t:langText(L.title), ic:L.icon||'📖', done:!!prog[L.id]})),
+    {t:'Sawal-Jawab', ic:'❓', done:!!prog.quiz},
+    {t:'Huroof Hunt game', ic:'🎈', done:!!prog.game},
+    {t:'Namaz seekhi', ic:'🕌', done:!!prog.salah}
+  ];
+
+  document.getElementById('progBody').innerHTML=`
+    <div class="prog-hero">
+      <div class="ph-star">⭐ ${stars}</div>
+      <div class="ph-name">${escapeHtml(p.name)}</div>
+      <div class="ph-bar"><div class="ph-fill" style="width:${pct}%"></div></div>
+      <div class="ph-sub">Qaida: ${lessonsDone} / ${totalLessons} lessons (${pct}%)</div>
+    </div>
+
+    <div class="prog-cards">
+      <div class="pc"><b>${hifzKnown}</b><span>Ayat yaad 🧠</span></div>
+      <div class="pc"><b>${duasSeen}/${DUAS.length}</b><span>Duain 🤲</span></div>
+      <div class="pc"><b>${p.lastRead?('S'+p.lastRead.surah):'—'}</b><span>Last read 📖</span></div>
+    </div>
+
+    <div class="section-head">Milestones</div>
+    ${rows.map(r=>`<div class="prog-row ${r.done?'done':''}">
+        <div class="pr-ic">${r.ic}</div>
+        <div class="pr-t">${escapeHtml(r.t)}</div>
+        <div class="pr-x">${r.done?'✅':'⏳'}</div>
+      </div>`).join('')}`;
+  go('progress');
+}
+
+/* ============================================================
+   6g. TEACHER LINK + SYNC  (Supabase)
+   Child enters the join code from their teacher → progress syncs.
+   ============================================================ */
+function openLink(){
+  const p=currentProfile(); if(!p){ go('profiles'); return; }
+  const body=document.getElementById('linkBody');
+
+  if(!SYNC_ON){
+    body.innerHTML=`<div class="card" style="text-align:center;padding:26px">
+      <div style="font-size:44px">🔧</div>
+      <div style="font-weight:800;margin-top:8px">Sync abhi setup nahi hai</div>
+      <div style="color:var(--ink-soft);font-weight:600;font-size:.88rem;margin-top:6px">
+        App ke code mein Supabase URL aur key daalein.</div></div>`;
+    go('link'); return;
+  }
+  if(p.linked){
+    body.innerHTML=`
+      <div class="prog-hero">
+        <div class="ph-star">✅</div>
+        <div class="ph-name">${escapeHtml(p.linked.teacherName||'Ustad')} se juda hua</div>
+        <div class="ph-sub">Student: ${escapeHtml(p.linked.name)}</div>
+      </div>
+      <div class="card" style="text-align:center;color:var(--ink-soft);font-weight:700;font-size:.88rem">
+        Aap ka progress khud-ba-khud teacher ko pohanchta rehta hai 🌙</div>
+      <button class="btn gold block" style="margin-top:12px" onclick="syncNow()">🔄 Abhi sync karo</button>
+      <button class="btn ghost block" style="margin-top:10px" onclick="unlinkTeacher()">Unlink</button>`;
+  } else {
+    body.innerHTML=`
+      <div class="card" style="text-align:center;padding:22px 16px">
+        <div style="font-size:44px">🔗</div>
+        <div style="font-weight:800;margin-top:6px">Teacher se judein</div>
+        <div style="color:var(--ink-soft);font-weight:600;font-size:.88rem;margin:6px 0 14px">
+          Ustad se apna <b>join code</b> lein aur yahan daalein.</div>
+        <input class="search" id="codeInput" placeholder="e.g. WASAY-4821"
+          style="text-align:center;font-weight:800;letter-spacing:2px;text-transform:uppercase"/>
+        <button class="btn block" onclick="doLink()">Join ✓</button>
+        <div id="linkErr" style="color:var(--coral);font-weight:700;font-size:.85rem;margin-top:10px"></div>
+      </div>`;
+  }
+  go('link');
+}
+async function doLink(){
+  const code=(document.getElementById('codeInput').value||'').trim().toUpperCase();
+  const err=document.getElementById('linkErr');
+  if(!code){ err.textContent='Code daalein.'; return; }
+  err.textContent='Check kar rahe hain… ⏳';
+  try{
+    const {data,error}=await sb.from('students').select('id,name,level,teacher_id').eq('join_code',code).maybeSingle();
+    if(error) throw error;
+    if(!data){ err.textContent='Ye code nahi mila. Dobara check karein.'; return; }
+    const p=currentProfile();
+    p.linked={ studentId:data.id, name:data.name, level:data.level };
+    save();
+    await syncNow(true);
+    openLink();
+    confetti(true);
+  }catch(e){ err.textContent='Internet ya code ka masla hai.'; }
+}
+function unlinkTeacher(){
+  askConfirm('Teacher se unlink karein?\nProgress phone par mehfooz rahega.', ()=>{
+    const p=currentProfile(); if(p){ delete p.linked; save(); }
+    openLink();
+  });
+}
+
+/* ---- push this child's progress to the cloud ---- */
+async function syncNow(quiet){
+  const p=currentProfile();
+  if(!SYNC_ON || !p || !p.linked) return;
+  const prog=p.progress||{};
+  const H=p.hifz||{};
+  const hifzCount=Object.keys(H).filter(k=>H[k].known).length;
+  const lessonsDone=QAIDA_CONFIG.lessons.filter(L=>prog[L.id]).length;
+  const stars=lessonsDone+(prog.quiz?1:0)+(prog.game?1:0)+(prog.salah?1:0)+Math.floor(hifzCount/5);
+  try{
+    await sb.from('activity').upsert({
+      student_id:p.linked.studentId,
+      qaida:prog,
+      hifz_count:hifzCount,
+      last_read:p.lastRead||null,
+      duas_done:Object.keys(p.duasDone||{}).length,
+      stars,
+      updated_at:new Date().toISOString()
+    },{onConflict:'student_id'});
+    if(!quiet) alertBox('Sync ho gaya ✅','Teacher ko aap ka progress mil gaya.');
+  }catch(e){ if(!quiet) alertBox('Sync nahi hua 😕','Internet check karein.'); }
+}
+
+/* auto-sync whenever progress is saved */
+const _saveOrig = save;
+save = function(){
+  _saveOrig();
+  clearTimeout(window._syncT);
+  window._syncT=setTimeout(()=>syncNow(true), 1500);   // debounce
+};
+
+/* ============================================================
+   7. HELPERS
+   ============================================================ */
+function langText(obj){
+  const lang = (currentProfile()?.lang)||'ur';
+  if(typeof obj==='string') return obj;
+  return obj[lang] || obj.en || obj.ur || '';
+}
+function escapeHtml(str){ return (str+'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+/* ---- Avatar helpers (emoji OR uploaded photo) ---- */
+function isImg(a){ return typeof a==='string' && a.startsWith('data:'); }
+function avatarInner(a){ return isImg(a) ? `<img src="${a}" alt=""/>` : (a||'🌙'); }
+function handleAvatarFile(e){
+  const file = e.target.files[0]; if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ev=>{
+    const img = new Image();
+    img.onload = ()=>{
+      const S=160, c=document.createElement('canvas'); c.width=S; c.height=S;
+      const ctx=c.getContext('2d');
+      const scale=Math.max(S/img.width, S/img.height);
+      const w=img.width*scale, h=img.height*scale;
+      ctx.drawImage(img,(S-w)/2,(S-h)/2,w,h);
+      pickedAvatar = c.toDataURL('image/jpeg',0.82);
+      renderAvatarPick();
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+  e.target.value="";
+}
+
+function confetti(big){
+  const emojis = big ? ['⭐','🌟','🎉','🌸','🏆'] : ['⭐','🌸','✨'];
+  const n = big?26:14;
+  for(let i=0;i<n;i++){
+    const e=document.createElement('div');
+    e.className='fall'; e.textContent=emojis[i%emojis.length];
+    e.style.left=Math.random()*100+'vw';
+    e.style.animationDuration=(2+Math.random()*2)+'s';
+    e.style.fontSize=(20+Math.random()*20)+'px';
+    document.body.appendChild(e);
+    setTimeout(()=>e.remove(),4200);
+  }
+}
+
+/* ============================================================
+   8. BOOT
+   ============================================================ */
+go('splash');
+
+/* ---- PWA: service worker + install prompt ---- */
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=>{
+    navigator.serviceWorker.register('sw.js').catch(()=>{});
+  });
+}
+let deferredPrompt=null;
+window.addEventListener('beforeinstallprompt', e=>{
+  e.preventDefault(); deferredPrompt=e;
+  const b=document.getElementById('installBtn'); if(b) b.style.display='inline-block';
+});
+function doInstall(){
+  if(!deferredPrompt) return;
+  deferredPrompt.prompt();
+  deferredPrompt.userChoice.finally(()=>{
+    deferredPrompt=null;
+    const b=document.getElementById('installBtn'); if(b) b.style.display='none';
+  });
+}
+window.addEventListener('appinstalled', ()=>{
+  const b=document.getElementById('installBtn'); if(b) b.style.display='none';
+});
+</script>
+</body>
+</html>
