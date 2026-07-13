@@ -390,6 +390,66 @@ body{
 .voice-banner button{position:absolute;top:8px;inset-inline-end:8px;background:none;border:none;
   font-size:16px;font-weight:800;color:#8a6d1e;cursor:pointer;padding:4px 8px;}
 
+/* Arabic UI text (not Quranic script — that keeps Scheherazade) */
+.arabicui{font-family:'Scheherazade New',serif;direction:rtl;font-size:1.25rem;line-height:1.9;}
+html[dir="rtl"][lang="ar"] body,
+html[lang="ar"] .center-title,
+html[lang="ar"] .sub,
+html[lang="ar"] .tt, html[lang="ar"] .hub-tt,
+html[lang="ar"] .hz-t, html[lang="ar"] .hz-s,
+html[lang="ar"] .s-name, html[lang="ar"] .pr-t,
+html[lang="ar"] .btn, html[lang="ar"] .rb,
+html[lang="ar"] .letter-name, html[lang="ar"] .kicker,
+html[lang="ar"] .tap-hint, html[lang="ar"] .field label,
+html[lang="ar"] .q-opt, html[lang="ar"] .pc span,
+html[lang="ar"] .ph-name, html[lang="ar"] .ph-sub,
+html[lang="ar"] .section-head, html[lang="ar"] .brand{
+  font-family:'Scheherazade New','Baloo 2',serif;
+}
+/* Urdu UI */
+html[lang="ur"] .center-title, html[lang="ur"] .sub,
+html[lang="ur"] .tt, html[lang="ur"] .hub-tt,
+html[lang="ur"] .hz-t, html[lang="ur"] .hz-s,
+html[lang="ur"] .pr-t, html[lang="ur"] .section-head,
+html[lang="ur"] .field label{
+  font-family:'Noto Nastaliq Urdu','Baloo 2',serif;line-height:2.1;
+}
+
+/* RTL: flip only the back chevron, not emoji icon buttons */
+html[dir="rtl"] .iconbtn.nav-back{transform:scaleX(-1);}
+html[dir="rtl"] .iconbtn.nav-back:active{transform:scaleX(-1) scale(.92);}
+
+/* ===== language picker (splash) ===== */
+.lang-pick{display:flex;gap:8px;margin:2px 0 22px;}
+.lang-pick button{border:2px solid #E2CFA0;background:rgba(255,255,255,.75);border-radius:14px;
+  padding:9px 16px;font-family:inherit;font-weight:800;font-size:.95rem;color:var(--ink-soft);
+  cursor:pointer;transition:transform .08s;}
+.lang-pick button:active{transform:scale(.94);}
+.lang-pick button.on{background:var(--emerald);color:#fff;border-color:var(--emerald);
+  box-shadow:0 4px 12px rgba(14,124,102,.3);}
+
+/* ===== RTL ===== */
+html[dir="rtl"] .letter-name,
+html[dir="rtl"] .kicker,
+html[dir="rtl"] .tap-hint{direction:rtl;}
+html[dir="rtl"] .mnemonic .mtext{direction:rtl;text-align:right;}
+html[dir="rtl"] .rule-text{direction:rtl;}
+html[dir="rtl"] .s-mid,
+html[dir="rtl"] .hz-t, html[dir="rtl"] .hz-s,
+html[dir="rtl"] .pr-t, html[dir="rtl"] .q-text{direction:rtl;text-align:right;}
+html[dir="rtl"] .stage,
+html[dir="rtl"] .quiz-box{direction:rtl;}
+html[dir="rtl"] .q-opt{direction:rtl;}
+html[dir="rtl"] .ayah-ar{text-align:right;}
+/* keep these visually LTR even in RTL mode */
+html[dir="rtl"] .lang-pick,
+html[dir="rtl"] .nav-row,
+html[dir="rtl"] .mem-controls,
+html[dir="rtl"] .mem-verdict,
+html[dir="rtl"] .mem-nav,
+html[dir="rtl"] .reader-bar,
+html[dir="rtl"] .harakat-row{direction:ltr;}
+
 @media(max-width:360px){
   .big-letter{font-size:7rem;}
   .brand{font-size:2.1rem;}
@@ -407,92 +467,91 @@ body{
     <svg class="mascot bob" viewBox="0 0 120 120" id="splash-mascot"></svg>
     <div class="brand"><span class="noor">Misbah</span>-ul-Quran</div>
     <div class="brand-ar arabic">مِصْبَاحُ الْقُرْآن</div>
-    <div class="tag">Learn the Qaida the fun way ✨</div>
-    <button class="btn gold" style="min-width:200px" onclick="go('profiles')">Start ▶</button>
-    <button class="btn ghost" id="installBtn" style="display:none;margin-top:12px;min-width:200px" onclick="doInstall()">📲 Install app</button>
+    <div class="tag" data-i18n="tagline">Learn the Qaida the fun way ✨</div>
+    <div class="lang-pick" id="langPick">
+      <button data-l="en" onclick="setLang('en')">English</button>
+      <button data-l="ur" onclick="setLang('ur')">اردو</button>
+      <button data-l="ar" onclick="setLang('ar')">العربية</button>
+    </div>
+    <button class="btn gold" style="min-width:200px" onclick="go('profiles')" data-i18n="start">Start ▶</button>
+    <button class="btn ghost" id="installBtn" style="display:none;margin-top:12px;min-width:200px" onclick="doInstall()" data-i18n="install">📲 Install app</button>
   </section>
 
   <!-- ===================== PROFILE SELECT ===================== -->
   <section class="screen" id="profiles">
     <div class="topbar">
-      <div class="brand" style="font-size:1.4rem"><span class="noor">Misbah</span>-ul-Quran</div>
+      <button class="iconbtn nav-back" style="margin-inline-start:0" onclick="go('splash')">‹</button>
+      <div class="brand" style="font-size:1.25rem"><span class="noor">Misbah</span>-ul-Quran</div>
     </div>
-    <div class="center-title">Who is reading today?</div>
-    <div class="sub">Tap your name to begin</div>
+    <div class="center-title" data-i18n="whoReading">Who is reading today?</div>
+    <div class="sub" data-i18n="tapName">Tap your name to begin</div>
     <div class="profile-grid" id="profileGrid"></div>
   </section>
 
   <!-- ===================== ADD / EDIT PROFILE ===================== -->
   <section class="screen" id="profileForm">
     <div class="topbar">
-      <button class="iconbtn" style="margin-inline-start:0" onclick="go('profiles')">‹</button>
+      <button class="iconbtn nav-back" style="margin-inline-start:0" onclick="go('profiles')">‹</button>
       <div class="center-title" id="formTitle" style="margin:0">New Child</div>
     </div>
     <div class="field">
-      <label>Child's name</label>
+      <label data-i18n="childName">Child's name</label>
       <input id="fName" placeholder="e.g. Syed Muhammad Abdul Wasay" maxlength="40"/>
     </div>
     <div class="field">
-      <label>Age</label>
+      <label data-i18n="age">Age</label>
       <input id="fAge" type="number" min="3" max="15" placeholder="e.g. 6"/>
     </div>
     <div class="field">
-      <label>Explanation language</label>
-      <select id="fLang">
-        <option value="ur">Urdu (اردو)</option>
-        <option value="en">English</option>
-      </select>
-    </div>
-    <div class="field">
-      <label>Choose an avatar</label>
+      <label data-i18n="chooseAvatar">Choose an avatar</label>
       <div class="avatar-pick" id="avatarPick"></div>
       <input type="file" id="avatarFile" accept="image/*" style="display:none" onchange="handleAvatarFile(event)"/>
     </div>
-    <button class="btn block" id="saveProfileBtn" onclick="saveProfile()">Save 💾</button>
-    <button class="btn coral block" id="deleteProfileBtn" onclick="confirmDelete()" style="margin-top:12px;display:none">Delete this child 🗑</button>
+    <button class="btn block" id="saveProfileBtn" onclick="saveProfile()" data-i18n="save">Save 💾</button>
+    <button class="btn coral block" id="deleteProfileBtn" onclick="confirmDelete()" style="margin-top:12px;display:none" data-i18n="deleteChild">Delete this child 🗑</button>
   </section>
 
   <!-- ===================== GREETING ===================== -->
   <section class="screen" id="greet">
     <svg class="mascot cheer" viewBox="0 0 120 120" id="greet-mascot"></svg>
     <div class="greet-ar arabic">اَلسَّلَامُ عَلَيْكُمْ</div>
-    <div class="greet-name" id="greetName">Dost!</div>
-    <button class="btn gold" style="margin-top:20px;min-width:180px" onclick="go('menu')">Let's go ▶</button>
+    <div class="greet-name" id="greetName"></div>
+    <button class="btn gold" style="margin-top:20px;min-width:180px" onclick="go('menu')" data-i18n="letsGo">Let's go ▶</button>
   </section>
 
   <!-- ===================== MAIN MENU ===================== -->
   <section class="screen" id="menu">
     <div class="topbar">
-      <div class="who"><span class="avatar-chip" id="menuAvatar">🌙</span><span id="menuName">Dost</span></div>
+      <div class="who"><span class="avatar-chip" id="menuAvatar">🌙</span><span id="menuName"></span></div>
       <button class="iconbtn" id="linkBtn" onclick="openLink()" title="Teacher">🔗</button>
       <button class="iconbtn" style="margin-inline-start:8px" onclick="go('profiles')">⇄</button>
     </div>
     <div class="menu-grid">
       <div class="tile qaida" onclick="openQaidaHub()">
-        <div class="ti">📖</div><div class="tt">Qaida</div>
+        <div class="ti">📖</div><div class="tt" data-i18n="qaida">Qaida</div>
       </div>
-      <div class="tile" onclick="openNazra()"><div class="ti">🕋</div><div class="tt">Quran Reading</div></div>
-      <div class="tile" onclick="openHifz()"><div class="ti">🧠</div><div class="tt">Hifz</div></div>
-      <div class="tile" onclick="startGame()"><div class="ti">🎈</div><div class="tt">Games</div></div>
-      <div class="tile" onclick="openDuas()"><div class="ti">🤲</div><div class="tt">Duas &amp; Salah</div></div>
-      <div class="tile" onclick="openProgress()"><div class="ti">⭐</div><div class="tt">My Progress</div></div>
+      <div class="tile" onclick="openNazra()"><div class="ti">🕋</div><div class="tt" data-i18n="quranReading">Quran Reading</div></div>
+      <div class="tile" onclick="openHifz()"><div class="ti">🧠</div><div class="tt" data-i18n="hifz">Hifz</div></div>
+      <div class="tile" onclick="startGame()"><div class="ti">🎈</div><div class="tt" data-i18n="games">Games</div></div>
+      <div class="tile" onclick="openDuas()"><div class="ti">🤲</div><div class="tt" data-i18n="duasSalah">Duas &amp; Salah</div></div>
+      <div class="tile" onclick="openProgress()"><div class="ti">⭐</div><div class="tt" data-i18n="myProgress">My Progress</div></div>
     </div>
   </section>
 
   <!-- ===================== QAIDA HUB ===================== -->
   <section class="screen" id="qaidaHub">
     <div class="topbar">
-      <button class="iconbtn" style="margin-inline-start:0" onclick="go('menu')">‹</button>
-      <div class="center-title" style="margin:0;font-size:1.2rem">Qaida</div>
+      <button class="iconbtn nav-back" style="margin-inline-start:0" onclick="go('menu')">‹</button>
+      <div class="center-title" style="margin:0;font-size:1.2rem" data-i18n="qaida">Qaida</div>
     </div>
-    <div class="sub">Ek ek karke seekho ✨</div>
+    <div class="sub" data-i18n="stepByStep">Learn one by one ✨</div>
     <div class="hub-grid" id="hubGrid"></div>
   </section>
 
   <!-- ===================== QAIDA LESSON ===================== -->
   <section class="screen" id="qaida">
     <div class="topbar">
-      <button class="iconbtn" style="margin-inline-start:0" onclick="go('menu')">‹</button>
+      <button class="iconbtn nav-back" style="margin-inline-start:0" onclick="go('menu')">‹</button>
       <div class="center-title" id="qTitle" style="margin:0;font-size:1.2rem">Qaida</div>
     </div>
     <div class="progress-dots" id="qDots"></div>
@@ -501,10 +560,10 @@ body{
         <button class="speaker" onclick="event.stopPropagation();playCurrent()">🔊</button>
         <!-- filled by JS -->
       </div>
-      <div class="voice-note" id="voiceNote">🔈 Is device par Arabic voice install nahi hai. Phone/tablet ki settings → Languages se "Arabic" add karein.</div>
+      <div class="voice-note" id="voiceNote" data-i18n="voiceWarn" data-i18n-html></div>
       <div class="nav-row">
-        <button class="btn ghost" id="prevBtn" onclick="prevStep()">‹ Back</button>
-        <button class="btn gold" onclick="playCurrent()">Repeat 🔁</button>
+        <button class="btn ghost" id="prevBtn" onclick="prevStep()" data-i18n="back">‹ Back</button>
+        <button class="btn gold" onclick="playCurrent()" data-i18n="repeat">Repeat 🔁</button>
         <button class="btn" id="nextBtn" onclick="nextStep()">Next ›</button>
       </div>
     </div>
@@ -513,8 +572,8 @@ body{
   <!-- ===================== QUIZ (Sawal-Jawab) ===================== -->
   <section class="screen" id="quiz">
     <div class="topbar">
-      <button class="iconbtn" style="margin-inline-start:0" onclick="openQaidaHub()">‹</button>
-      <div class="center-title" style="margin:0;font-size:1.2rem">Sawal-Jawab</div>
+      <button class="iconbtn nav-back" style="margin-inline-start:0" onclick="openQaidaHub()">‹</button>
+      <div class="center-title" style="margin:0;font-size:1.2rem" data-i18n="quizName">Q &amp; A</div>
       <span id="quizProgress" style="margin-inline-start:auto;font-weight:800;color:var(--emerald)"></span>
     </div>
     <div class="quiz-box" id="quizBox"></div>
@@ -523,59 +582,59 @@ body{
   <!-- ===================== NAZRA: SURAH LIST ===================== -->
   <section class="screen" id="nazra">
     <div class="topbar">
-      <button class="iconbtn" style="margin-inline-start:0" onclick="go('menu')">‹</button>
-      <div class="center-title" style="margin:0;font-size:1.2rem">Quran — Nazra</div>
+      <button class="iconbtn nav-back" style="margin-inline-start:0" onclick="go('menu')">‹</button>
+      <div class="center-title" style="margin:0;font-size:1.2rem" data-i18n="quranReading">Quran Reading</div>
     </div>
     <div id="lastRead"></div>
-    <input class="search" id="surahSearch" placeholder="Surah dhoondein… (naam ya number)" oninput="renderSurahList()"/>
-    <div id="surahList"><div class="loading">Loading surahs… ⏳</div></div>
+    <input class="search" id="surahSearch" data-i18n-ph="searchSurah" placeholder="Search surah…" oninput="renderSurahList()"/>
+    <div id="surahList"><div class="loading" data-i18n="loading">Loading…</div></div>
   </section>
 
   <!-- ===================== NAZRA: READER ===================== -->
   <section class="screen" id="reader">
     <div class="topbar">
-      <button class="iconbtn" style="margin-inline-start:0" onclick="stopAudio();openNazra()">‹</button>
+      <button class="iconbtn nav-back" style="margin-inline-start:0" onclick="stopAudio();openNazra()">‹</button>
       <div class="center-title" id="rTitle" style="margin:0;font-size:1.1rem">Surah</div>
       <button class="iconbtn" onclick="openReaderSettings()">⚙</button>
     </div>
     <div class="reader-bar">
-      <button class="rb" onclick="playFrom(0)">▶ Start</button>
+      <button class="rb" onclick="playFrom(0)" data-i18n="rStart">▶ Start</button>
       <button class="rb" id="rbAuto" onclick="toggleAuto()">🔁 Auto: off</button>
       <button class="rb" id="rbRep" onclick="cycleRepeat()">Repeat: 1x</button>
     </div>
-    <div id="ayahList"><div class="loading">Loading… ⏳</div></div>
+    <div id="ayahList"><div class="loading" data-i18n="loading">Loading…</div></div>
   </section>
 
   <!-- ===================== HIFZ HUB ===================== -->
   <section class="screen" id="hifz">
     <div class="topbar">
-      <button class="iconbtn" style="margin-inline-start:0" onclick="go('menu')">‹</button>
-      <div class="center-title" style="margin:0;font-size:1.2rem">Hifz 🧠</div>
+      <button class="iconbtn nav-back" style="margin-inline-start:0" onclick="go('menu')">‹</button>
+      <div class="center-title" style="margin:0;font-size:1.2rem" data-i18n="hifz">Hifz</div>
     </div>
     <div id="hifzStats"></div>
     <div class="hifz-modes">
       <div class="hz-card sabaq" onclick="pickHifzSurah('sabaq')">
         <div class="hz-ic">🆕</div>
-        <div><div class="hz-t">Sabaq</div><div class="hz-s">Naya sabaq yaad karo</div></div>
+        <div><div class="hz-t" data-i18n="sabaq">Sabaq</div><div class="hz-s" data-i18n="sabaqSub">Memorise a new lesson</div></div>
       </div>
       <div class="hz-card sabqi" onclick="startReview('sabqi')">
         <div class="hz-ic">🔁</div>
-        <div><div class="hz-t">Sabqi</div><div class="hz-s" id="sabqiCount">Haali revision</div></div>
+        <div><div class="hz-t" data-i18n="sabqi">Sabqi</div><div class="hz-s" id="sabqiCount">—</div></div>
       </div>
       <div class="hz-card manzil" onclick="startReview('manzil')">
         <div class="hz-ic">📚</div>
-        <div><div class="hz-t">Manzil</div><div class="hz-s" id="manzilCount">Purani revision</div></div>
+        <div><div class="hz-t" data-i18n="manzil">Manzil</div><div class="hz-s" id="manzilCount">—</div></div>
       </div>
     </div>
-    <div class="section-head" id="hifzListHead" style="display:none">Surah chuno</div>
-    <input class="search" id="hifzSearch" placeholder="Surah dhoondein…" oninput="renderHifzSurahs()" style="display:none"/>
+    <div class="section-head" id="hifzListHead" style="display:none" data-i18n="chooseSurah">Choose a surah</div>
+    <input class="search" id="hifzSearch" data-i18n-ph="searchSurah" placeholder="Search surah…" oninput="renderHifzSurahs()" style="display:none"/>
     <div id="hifzSurahList"></div>
   </section>
 
   <!-- ===================== HIFZ: MEMORIZE ===================== -->
   <section class="screen" id="memorize">
     <div class="topbar">
-      <button class="iconbtn" style="margin-inline-start:0" onclick="stopAudio();openHifz()">‹</button>
+      <button class="iconbtn nav-back" style="margin-inline-start:0" onclick="stopAudio();openHifz()">‹</button>
       <div class="center-title" id="mTitle" style="margin:0;font-size:1.05rem">Hifz</div>
       <span id="mCount" style="margin-inline-start:auto;font-weight:800;color:var(--emerald)"></span>
     </div>
@@ -589,39 +648,39 @@ body{
 
     <div class="mem-controls">
       <button class="rb" id="mHideBtn" onclick="toggleHide()">🙈 Hide</button>
-      <button class="rb" onclick="playMemAyah()">🔊 Suno</button>
+      <button class="rb" onclick="playMemAyah()" data-i18n="listen">🔊 Listen</button>
       <button class="rb" id="mRepBtn" onclick="cycleMemRepeat()">Repeat: 5x</button>
     </div>
 
     <div class="mem-verdict">
-      <button class="btn coral" style="flex:1" onclick="markAyah(false)">😕 Phir se</button>
-      <button class="btn" style="flex:1" onclick="markAyah(true)">✅ Yaad ho gayi</button>
+      <button class="btn coral" style="flex:1" onclick="markAyah(false)" data-i18n="again">😕 Again</button>
+      <button class="btn" style="flex:1" onclick="markAyah(true)" data-i18n="gotIt">✅ Memorised</button>
     </div>
 
     <div class="mem-nav">
-      <button class="rb" onclick="memPrev()">‹ Back</button>
-      <button class="rb" onclick="memNext()">Next ›</button>
+      <button class="rb" onclick="memPrev()" data-i18n="back">‹ Back</button>
+      <button class="rb" onclick="memNext()" data-i18n="next">Next ›</button>
     </div>
   </section>
 
   <!-- ===================== DUAS & SALAH HUB ===================== -->
   <section class="screen" id="duas">
     <div class="topbar">
-      <button class="iconbtn" style="margin-inline-start:0" onclick="go('menu')">‹</button>
-      <div class="center-title" style="margin:0;font-size:1.2rem">Duas &amp; Salah 🤲</div>
+      <button class="iconbtn nav-back" style="margin-inline-start:0" onclick="go('menu')">‹</button>
+      <div class="center-title" style="margin:0;font-size:1.2rem" data-i18n="duasSalah">Duas &amp; Salah</div>
     </div>
     <div class="hz-card sabaq" onclick="openSalah()" style="margin-bottom:14px">
       <div class="hz-ic">🕌</div>
-      <div><div class="hz-t">Namaz seekho</div><div class="hz-s">Step by step, shuru se aakhir tak</div></div>
+      <div><div class="hz-t" data-i18n="learnSalah">Learn Salah</div><div class="hz-s" data-i18n="learnSalahSub">Step by step</div></div>
     </div>
-    <div class="section-head">Masnoon Duain</div>
+    <div class="section-head" data-i18n="masnoonDuas">Daily Duas</div>
     <div id="duaList"></div>
   </section>
 
   <!-- ===================== DUA CARD ===================== -->
   <section class="screen" id="duaCard">
     <div class="topbar">
-      <button class="iconbtn" style="margin-inline-start:0" onclick="openDuas()">‹</button>
+      <button class="iconbtn nav-back" style="margin-inline-start:0" onclick="openDuas()">‹</button>
       <div class="center-title" id="dTitle" style="margin:0;font-size:1.1rem">Dua</div>
       <span id="dCount" style="margin-inline-start:auto;font-weight:800;color:var(--emerald)"></span>
     </div>
@@ -630,8 +689,8 @@ body{
         <button class="speaker" onclick="event.stopPropagation();playDua()">🔊</button>
       </div>
       <div class="nav-row">
-        <button class="btn ghost" id="dPrev" onclick="duaPrev()">‹ Back</button>
-        <button class="btn gold" onclick="playDua()">Repeat 🔁</button>
+        <button class="btn ghost" id="dPrev" onclick="duaPrev()" data-i18n="back">‹ Back</button>
+        <button class="btn gold" onclick="playDua()" data-i18n="repeat">Repeat 🔁</button>
         <button class="btn" id="dNext" onclick="duaNext()">Next ›</button>
       </div>
     </div>
@@ -640,8 +699,8 @@ body{
   <!-- ===================== SALAH GUIDE ===================== -->
   <section class="screen" id="salah">
     <div class="topbar">
-      <button class="iconbtn" style="margin-inline-start:0" onclick="openDuas()">‹</button>
-      <div class="center-title" style="margin:0;font-size:1.1rem">Namaz 🕌</div>
+      <button class="iconbtn nav-back" style="margin-inline-start:0" onclick="openDuas()">‹</button>
+      <div class="center-title" style="margin:0;font-size:1.1rem" data-i18n="salah">Salah 🕌</div>
       <span id="slCount" style="margin-inline-start:auto;font-weight:800;color:var(--emerald)"></span>
     </div>
     <div class="progress-dots" id="slDots"></div>
@@ -650,8 +709,8 @@ body{
         <button class="speaker" onclick="event.stopPropagation();playSalah()">🔊</button>
       </div>
       <div class="nav-row">
-        <button class="btn ghost" id="slPrev" onclick="salahPrev()">‹ Back</button>
-        <button class="btn gold" onclick="playSalah()">Repeat 🔁</button>
+        <button class="btn ghost" id="slPrev" onclick="salahPrev()" data-i18n="back">‹ Back</button>
+        <button class="btn gold" onclick="playSalah()" data-i18n="repeat">Repeat 🔁</button>
         <button class="btn" id="slNext" onclick="salahNext()">Next ›</button>
       </div>
     </div>
@@ -660,8 +719,8 @@ body{
   <!-- ===================== MY PROGRESS ===================== -->
   <section class="screen" id="progress">
     <div class="topbar">
-      <button class="iconbtn" style="margin-inline-start:0" onclick="go('menu')">‹</button>
-      <div class="center-title" style="margin:0;font-size:1.2rem">My Progress ⭐</div>
+      <button class="iconbtn nav-back" style="margin-inline-start:0" onclick="go('menu')">‹</button>
+      <div class="center-title" style="margin:0;font-size:1.2rem" data-i18n="myProgress">My Progress</div>
     </div>
     <div id="progBody"></div>
   </section>
@@ -669,8 +728,8 @@ body{
   <!-- ===================== TEACHER LINK ===================== -->
   <section class="screen" id="link">
     <div class="topbar">
-      <button class="iconbtn" style="margin-inline-start:0" onclick="go('menu')">‹</button>
-      <div class="center-title" style="margin:0;font-size:1.2rem">Teacher 🔗</div>
+      <button class="iconbtn nav-back" style="margin-inline-start:0" onclick="go('menu')">‹</button>
+      <div class="center-title" style="margin:0;font-size:1.2rem" data-i18n="teacher">Teacher</div>
     </div>
     <div id="linkBody"></div>
   </section>
@@ -678,8 +737,8 @@ body{
   <!-- ===================== GAME: Huroof Hunt ===================== -->
   <section class="screen" id="game">
     <div class="topbar">
-      <button class="iconbtn" style="margin-inline-start:0" onclick="go('menu')">‹</button>
-      <div class="center-title" style="margin:0;font-size:1.2rem">Huroof Hunt 🎈</div>
+      <button class="iconbtn nav-back" style="margin-inline-start:0" onclick="go('menu')">‹</button>
+      <div class="center-title" style="margin:0;font-size:1.2rem" data-i18n="gameTitle">Letter Hunt 🎈</div>
     </div>
     <div id="gamePlay">
       <div class="game-hdr">
@@ -688,7 +747,7 @@ body{
         <span class="game-stat" id="gScore">⭐ 0</span>
       </div>
       <div class="game-prompt" onclick="playGameTarget()">
-        <div class="gp-label">Ye harf dhoondo 🔊</div>
+        <div class="gp-label" data-i18n="findLetter">Find this letter 🔊</div>
         <div class="gp-target" id="gTarget">—</div>
       </div>
       <div class="bubbles" id="bubbles"></div>
@@ -699,25 +758,24 @@ body{
   <!-- ===================== REWARD ===================== -->
   <section class="screen" id="reward">
     <div class="reward-star">🌟</div>
-    <div class="reward-title" id="rewardTitle">Shabash!</div>
-    <div class="sub" id="rewardSub">You finished the lesson!</div>
-    <button class="btn gold" style="min-width:180px;margin-top:10px" id="rewardBackBtn" onclick="rewardBack()">Back 🏠</button>
+    <div class="reward-title" id="rewardTitle"></div>
+    <div class="sub" id="rewardSub"></div>
+    <button class="btn gold" style="min-width:180px;margin-top:10px" id="rewardBackBtn" onclick="rewardBack()" data-i18n="backHome">Back 🏠</button>
   </section>
 
 </div>
 
 <!-- ===================== GLOBAL VOICE BANNER ===================== -->
 <div class="voice-banner" id="voiceBanner">
-  🔇 <b>Awaaz nahi aa rahi?</b> Is device par <b>Arabic voice</b> install nahi hai.<br>
-  Settings → Languages → <b>Arabic</b> add karein (ya Google TTS install karein).
+  <span data-i18n="voiceWarn" data-i18n-html></span>
   <button onclick="this.parentElement.classList.remove('show')">✕</button>
 </div>
 
 <!-- ===================== READER SETTINGS ===================== -->
 <div class="modal-overlay" id="readerSettings">
   <div class="modal-card" style="text-align:start">
-    <div style="font-weight:800;color:var(--emerald);font-size:1.15rem;margin-bottom:14px;text-align:center">Reader settings ⚙</div>
-    <div style="font-weight:700;margin-bottom:6px">Qari (reciter)</div>
+    <div style="font-weight:800;color:var(--emerald);font-size:1.15rem;margin-bottom:14px;text-align:center" data-i18n="readerSet">Reader settings ⚙</div>
+    <div style="font-weight:700;margin-bottom:6px" data-i18n="reciter">Reciter (Qari)</div>
     <select id="reciterSel" onchange="setReciter(this.value)"
       style="width:100%;padding:12px 14px;border-radius:14px;border:2px solid #EAD9B4;font-family:inherit;font-weight:700;font-size:1rem;margin-bottom:16px">
       <option value="ar.husary">Mahmoud Al-Husary (seekhne ke liye best)</option>
@@ -725,12 +783,12 @@ body{
       <option value="ar.abdulbasitmurattal">Abdul Basit (Murattal)</option>
       <option value="ar.minshawi">Al-Minshawi</option>
     </select>
-    <div style="font-weight:700;margin-bottom:6px">Arabic text size</div>
+    <div style="font-weight:700;margin-bottom:6px" data-i18n="textSize">Arabic text size</div>
     <div style="display:flex;gap:10px;margin-bottom:18px">
       <button class="btn ghost" style="flex:1" onclick="setFont(-4)">A −</button>
       <button class="btn ghost" style="flex:1" onclick="setFont(4)">A +</button>
     </div>
-    <button class="btn block" onclick="document.getElementById('readerSettings').classList.remove('show')">Done ✓</button>
+    <button class="btn block" onclick="document.getElementById('readerSettings').classList.remove('show')" data-i18n="done">Done ✓</button>
   </div>
 </div>
 
@@ -740,7 +798,7 @@ body{
     <div class="modal-emoji">🗑️</div>
     <div class="modal-msg" id="confirmMsg">Delete?</div>
     <div class="modal-btns">
-      <button class="btn ghost" onclick="closeConfirm()">Cancel</button>
+      <button class="btn ghost" onclick="closeConfirm()" data-i18n="cancel">Cancel</button>
       <button class="btn coral" id="confirmYes">Delete</button>
     </div>
   </div>
@@ -752,10 +810,175 @@ body{
    ⚙️  SETUP — same Supabase project as the Teacher Panel.
    Blank chhod dein to app normal chalti rahegi (bas sync nahi hoga).
    ============================================================ */
-const SUPABASE_URL = "https://gsccibyqomvwmskdqova.supabase.co";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdzY2NpYnlxb212d21za2Rxb3ZhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM4MzQ3MTgsImV4cCI6MjA5OTQxMDcxOH0.d3KKtiAd29d4ZyXo0KWZq9xseMoxU93KKkBkYwokQQw";
+const SUPABASE_URL = "PASTE_YOUR_SUPABASE_URL_HERE";
+const SUPABASE_KEY = "PASTE_YOUR_ANON_KEY_HERE";
 const SYNC_ON = !SUPABASE_URL.startsWith("PASTE") && !SUPABASE_KEY.startsWith("PASTE");
 let sb = SYNC_ON ? supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
+
+/* ============================================================
+   0. i18n — UI languages: English / اردو / العربية
+   Add a language by adding a column below. No UI code changes needed.
+   ============================================================ */
+const LANGS = { en:{name:'English', dir:'ltr'}, ur:{name:'اردو', dir:'rtl'}, ar:{name:'العربية', dir:'rtl'} };
+
+const T_DICT = {
+  tagline:      {en:"Learn the Qaida the fun way ✨", ur:"مزے مزے میں قاعدہ سیکھیں ✨", ar:"تعلّم القاعدة بمتعة ✨"},
+  start:        {en:"Start ▶", ur:"شروع کریں ▶", ar:"ابدأ ▶"},
+  install:      {en:"📲 Install app", ur:"📲 ایپ انسٹال کریں", ar:"📲 ثبّت التطبيق"},
+  whoReading:   {en:"Who is reading today?", ur:"آج کون پڑھ رہا ہے؟", ar:"من يقرأ اليوم؟"},
+  tapName:      {en:"Tap your name to begin", ur:"شروع کرنے کے لیے اپنے نام پر ٹیپ کریں", ar:"اضغط على اسمك للبدء"},
+  addChild:     {en:"Add child", ur:"بچہ شامل کریں", ar:"أضف طفلاً"},
+  newChild:     {en:"New Child", ur:"نیا بچہ", ar:"طفل جديد"},
+  editChild:    {en:"Edit", ur:"تبدیلی", ar:"تعديل"},
+  childName:    {en:"Child's name", ur:"بچے کا نام", ar:"اسم الطفل"},
+  age:          {en:"Age", ur:"عمر", ar:"العمر"},
+  explLang:     {en:"Explanation language", ur:"وضاحت کی زبان", ar:"لغة الشرح"},
+  chooseAvatar: {en:"Choose an avatar", ur:"اوتار منتخب کریں", ar:"اختر صورة"},
+  save:         {en:"Save 💾", ur:"محفوظ کریں 💾", ar:"حفظ 💾"},
+  deleteChild:  {en:"Delete this child 🗑", ur:"اس بچے کو حذف کریں 🗑", ar:"احذف هذا الطفل 🗑"},
+  cancel:       {en:"Cancel", ur:"منسوخ", ar:"إلغاء"},
+  del:          {en:"Delete", ur:"حذف کریں", ar:"حذف"},
+  ok:           {en:"OK", ur:"ٹھیک ہے", ar:"حسناً"},
+  letsGo:       {en:"Let's go ▶", ur:"چلیں ▶", ar:"هيا بنا ▶"},
+  confirmDelete:{en:'Delete "{n}"?\nThis cannot be undone.', ur:'"{n}" کو حذف کریں؟\nیہ واپس نہیں آئے گا۔', ar:'حذف "{n}"؟\nلا يمكن التراجع.'},
+
+  qaida:        {en:"Qaida", ur:"قاعدہ", ar:"القاعدة"},
+  quranReading: {en:"Quran Reading", ur:"قرآن پڑھنا", ar:"قراءة القرآن"},
+  hifz:         {en:"Hifz", ur:"حفظ", ar:"الحفظ"},
+  games:        {en:"Games", ur:"کھیل", ar:"ألعاب"},
+  duasSalah:    {en:"Duas & Salah", ur:"دعائیں اور نماز", ar:"الأدعية والصلاة"},
+  myProgress:   {en:"My Progress", ur:"میری پیش رفت", ar:"تقدّمي"},
+  teacher:      {en:"Teacher", ur:"استاد", ar:"المعلّم"},
+
+  back:         {en:"‹ Back", ur:"‹ واپس", ar:"‹ رجوع"},
+  next:         {en:"Next ›", ur:"آگے ›", ar:"التالي ›"},
+  repeat:       {en:"Repeat 🔁", ur:"دہرائیں 🔁", ar:"كرّر 🔁"},
+  finish:       {en:"Finish 🎉", ur:"مکمل 🎉", ar:"إنهاء 🎉"},
+  stepByStep:   {en:"Learn one by one ✨", ur:"ایک ایک کرکے سیکھیں ✨", ar:"تعلّم واحداً تلو الآخر ✨"},
+  tapHear:      {en:"Tap anywhere to hear 🔊", ur:"سننے کے لیے ٹیپ کریں 🔊", ar:"اضغط للاستماع 🔊"},
+  tapLetter:    {en:"Tap the letter to hear it 🔊", ur:"حرف پر ٹیپ کرکے سنیں 🔊", ar:"اضغط الحرف للاستماع 🔊"},
+  tapBox:       {en:"Tap each box to hear 🔊", ur:"ہر خانہ ٹیپ کرکے سنیں 🔊", ar:"اضغط كل مربع للاستماع 🔊"},
+  nextToGo:     {en:"Press Next › to continue", ur:"آگے › دبا کر جاری رکھیں", ar:"اضغط التالي › للمتابعة"},
+  letter:       {en:"Letter", ur:"حرف", ar:"حرف"},
+  readIt:       {en:"Read it", ur:"پڑھیں", ar:"اقرأ"},
+  example:      {en:"Example", ur:"مثال", ar:"مثال"},
+  letsBegin:    {en:"Let's begin 🌙", ur:"آئیے شروع کریں 🌙", ar:"لنبدأ 🌙"},
+  lessonDone:   {en:"Lesson complete!", ur:"سبق مکمل!", ar:"اكتمل الدرس!"},
+  shabash:      {en:"Well done, {n}! 🎉", ur:"شاباش، {n}! 🎉", ar:"أحسنت يا {n}! 🎉"},
+  mashaAllah:   {en:"MashaAllah! 🌟", ur:"ماشاء اللہ! 🌟", ar:"ما شاء الله! 🌟"},
+  score:        {en:"Score", ur:"اسکور", ar:"النتيجة"},
+
+  searchSurah:  {en:"Search surah… (name or number)", ur:"سورت تلاش کریں… (نام یا نمبر)", ar:"ابحث عن سورة… (اسم أو رقم)"},
+  loading:      {en:"Loading… ⏳", ur:"لوڈ ہو رہا ہے… ⏳", ar:"جارٍ التحميل… ⏳"},
+  noSurah:      {en:"No surah found", ur:"کوئی سورت نہیں ملی", ar:"لم يتم العثور على سورة"},
+  needNet:      {en:"Internet needed 😕", ur:"انٹرنیٹ چاہیے 😕", ar:"يلزم اتصال بالإنترنت 😕"},
+  loadFail:     {en:"Could not load 😕 Check your internet.", ur:"لوڈ نہیں ہوا 😕 انٹرنیٹ چیک کریں۔", ar:"تعذّر التحميل 😕 تحقق من الإنترنت."},
+  whereLeft:    {en:"📖 Where you left off", ur:"📖 جہاں چھوڑا تھا", ar:"📖 حيث توقفت"},
+  ayah:         {en:"Ayah", ur:"آیت", ar:"آية"},
+  ayahs:        {en:"ayahs", ur:"آیات", ar:"آيات"},
+  rStart:       {en:"▶ Start", ur:"▶ شروع", ar:"▶ ابدأ"},
+  rAuto:        {en:"🔁 Auto: {v}", ur:"🔁 خودکار: {v}", ar:"🔁 تلقائي: {v}"},
+  rRepeat:      {en:"Repeat: {v}x", ur:"دہرائیں: {v}x", ar:"تكرار: {v}x"},
+  on:           {en:"on", ur:"آن", ar:"تشغيل"},
+  off:          {en:"off", ur:"آف", ar:"إيقاف"},
+  readerSet:    {en:"Reader settings ⚙", ur:"ریڈر سیٹنگز ⚙", ar:"إعدادات القارئ ⚙"},
+  reciter:      {en:"Reciter (Qari)", ur:"قاری", ar:"القارئ"},
+  textSize:     {en:"Arabic text size", ur:"عربی متن کا سائز", ar:"حجم النص العربي"},
+  done:         {en:"Done ✓", ur:"ہو گیا ✓", ar:"تم ✓"},
+
+  sabaq:        {en:"Sabaq", ur:"سبق", ar:"السبق"},
+  sabaqSub:     {en:"Memorise a new lesson", ur:"نیا سبق یاد کریں", ar:"احفظ درساً جديداً"},
+  sabqi:        {en:"Sabqi", ur:"سبقی", ar:"السبقي"},
+  sabqiSub:     {en:"Recent revision", ur:"حالیہ دہرائی", ar:"مراجعة قريبة"},
+  manzil:       {en:"Manzil", ur:"منزل", ar:"المنزل"},
+  manzilSub:    {en:"Older revision", ur:"پرانی دہرائی", ar:"مراجعة قديمة"},
+  chooseSurah:  {en:"Choose a surah", ur:"سورت منتخب کریں", ar:"اختر سورة"},
+  ayatMemo:     {en:"Ayat memorised", ur:"آیات یاد", ar:"آيات محفوظة"},
+  nothingYet:   {en:"Nothing yet", ur:"ابھی کچھ نہیں", ar:"لا شيء بعد"},
+  forRevision:  {en:"{n} ayat to revise", ur:"{n} آیات دہرانے کے لیے", ar:"{n} آيات للمراجعة"},
+  memorised:    {en:"memorised", ur:"یاد", ar:"محفوظة"},
+  hideRecall:   {en:"👆 Recite from memory, then tap to check", ur:"👆 زبانی پڑھیں، پھر ٹیپ کرکے دیکھیں", ar:"👆 اقرأ من الذاكرة ثم اضغط للتحقق"},
+  nowCompare:   {en:"✓ Now compare", ur:"✓ اب ملائیں", ar:"✓ الآن قارن"},
+  hideBtn:      {en:"🙈 Hide", ur:"🙈 چھپائیں", ar:"🙈 إخفاء"},
+  showBtn:      {en:"👁 Show", ur:"👁 دکھائیں", ar:"👁 إظهار"},
+  listen:       {en:"🔊 Listen", ur:"🔊 سنیں", ar:"🔊 استمع"},
+  again:        {en:"😕 Again", ur:"😕 پھر سے", ar:"😕 مرة أخرى"},
+  gotIt:        {en:"✅ Memorised", ur:"✅ یاد ہو گئی", ar:"✅ حفظتها"},
+  emptyList:    {en:"{m} is empty", ur:"{m} خالی ہے", ar:"{m} فارغ"},
+  emptySub:     {en:"Memorise some ayat in Sabaq first.", ur:"پہلے سبق میں کچھ آیات یاد کریں۔", ar:"احفظ بعض الآيات في السبق أولاً."},
+
+  gameTitle:    {en:"Letter Hunt 🎈", ur:"حروف کی تلاش 🎈", ar:"صيد الحروف 🎈"},
+  findLetter:   {en:"Find this letter 🔊", ur:"یہ حرف ڈھونڈیں 🔊", ar:"ابحث عن هذا الحرف 🔊"},
+  round:        {en:"Round {a}/{b}", ur:"راؤنڈ {a}/{b}", ar:"جولة {a}/{b}"},
+  perfect:      {en:"Perfect", ur:"بالکل ٹھیک", ar:"ممتاز"},
+  playAgain:    {en:"Play again 🔁", ur:"دوبارہ کھیلیں 🔁", ar:"العب مجدداً 🔁"},
+  backMenu:     {en:"Back to menu 🏠", ur:"مینو پر واپس 🏠", ar:"العودة للقائمة 🏠"},
+  backHome:     {en:"Back 🏠", ur:"واپس 🏠", ar:"رجوع 🏠"},
+
+  learnSalah:   {en:"Learn Salah", ur:"نماز سیکھیں", ar:"تعلّم الصلاة"},
+  learnSalahSub:{en:"Step by step, start to finish", ur:"شروع سے آخر تک، مرحلہ وار", ar:"خطوة بخطوة من البداية للنهاية"},
+  masnoonDuas:  {en:"Daily Duas", ur:"مسنون دعائیں", ar:"الأدعية المأثورة"},
+  salah:        {en:"Salah 🕌", ur:"نماز 🕌", ar:"الصلاة 🕌"},
+  dua:          {en:"Dua", ur:"دعا", ar:"دعاء"},
+  allDuasDone:  {en:"All duas complete!", ur:"تمام دعائیں مکمل!", ar:"اكتملت جميع الأدعية!"},
+  salahDone:    {en:"You learned all the steps of Salah!", ur:"آپ نے نماز کے تمام مراحل سیکھ لیے!", ar:"تعلّمت جميع خطوات الصلاة!"},
+
+  milestones:   {en:"Milestones", ur:"سنگِ میل", ar:"الإنجازات"},
+  lessons:      {en:"lessons", ur:"اسباق", ar:"دروس"},
+  duasCard:     {en:"Duas 🤲", ur:"دعائیں 🤲", ar:"أدعية 🤲"},
+  lastRead:     {en:"Last read 📖", ur:"آخری پڑھا 📖", ar:"آخر قراءة 📖"},
+  quizName:     {en:"Q & A", ur:"سوال جواب", ar:"أسئلة وأجوبة"},
+  gameName:     {en:"Letter Hunt game 🎈", ur:"حروف کی تلاش 🎈", ar:"لعبة صيد الحروف 🎈"},
+  salahLearned: {en:"Salah learned 🕌", ur:"نماز سیکھی 🕌", ar:"تعلّم الصلاة 🕌"},
+
+  syncOff:      {en:"Sync is not set up", ur:"سِنک سیٹ اپ نہیں ہے", ar:"المزامنة غير مُعدّة"},
+  syncOffSub:   {en:"Add your Supabase URL and key in the app code.", ur:"ایپ کے کوڈ میں Supabase URL اور key ڈالیں۔", ar:"أضف رابط Supabase والمفتاح في كود التطبيق."},
+  joinTeacher:  {en:"Join your teacher", ur:"اپنے استاد سے جڑیں", ar:"انضم إلى معلّمك"},
+  joinSub:      {en:"Ask your teacher for the join code.", ur:"اپنے استاد سے جوائن کوڈ لیں۔", ar:"اطلب رمز الانضمام من معلّمك."},
+  joinBtn:      {en:"Join ✓", ur:"جڑیں ✓", ar:"انضم ✓"},
+  enterCode:    {en:"Enter a code.", ur:"کوڈ درج کریں۔", ar:"أدخل الرمز."},
+  checking:     {en:"Checking… ⏳", ur:"چیک کر رہے ہیں… ⏳", ar:"جارٍ التحقق… ⏳"},
+  codeBad:      {en:"Code not found. Please check again.", ur:"یہ کوڈ نہیں ملا۔ دوبارہ چیک کریں۔", ar:"لم يتم العثور على الرمز. تحقق مجدداً."},
+  codeErr:      {en:"Internet or code problem.", ur:"انٹرنیٹ یا کوڈ کا مسئلہ ہے۔", ar:"مشكلة في الإنترنت أو الرمز."},
+  linkedTo:     {en:"Linked to {t}", ur:"{t} سے جڑ گئے", ar:"مرتبط بـ {t}"},
+  student:      {en:"Student", ur:"طالب علم", ar:"الطالب"},
+  linkedNote:   {en:"Your progress reaches your teacher automatically 🌙", ur:"آپ کی پیش رفت خود بخود استاد تک پہنچتی ہے 🌙", ar:"يصل تقدّمك إلى معلّمك تلقائياً 🌙"},
+  syncNow:      {en:"🔄 Sync now", ur:"🔄 ابھی سِنک کریں", ar:"🔄 زامن الآن"},
+  unlink:       {en:"Unlink", ur:"علیحدہ کریں", ar:"إلغاء الربط"},
+  unlinkAsk:    {en:"Unlink from teacher?\nYour progress stays on this device.", ur:"استاد سے علیحدہ کریں؟\nپیش رفت اس ڈیوائس پر محفوظ رہے گی۔", ar:"إلغاء الربط بالمعلّم؟\nيبقى تقدّمك على هذا الجهاز."},
+  syncOk:       {en:"Synced ✅", ur:"سِنک ہو گیا ✅", ar:"تمت المزامنة ✅"},
+  syncOkSub:    {en:"Your teacher has your progress.", ur:"استاد کو آپ کی پیش رفت مل گئی۔", ar:"وصل تقدّمك إلى معلّمك."},
+  syncFail:     {en:"Sync failed 😕", ur:"سِنک نہیں ہوا 😕", ar:"فشلت المزامنة 😕"},
+  syncFailSub:  {en:"Check your internet.", ur:"انٹرنیٹ چیک کریں۔", ar:"تحقق من الإنترنت."},
+
+  voiceWarn:    {en:"🔇 <b>No sound?</b> This device has no <b>Arabic voice</b> installed.<br>Settings → Languages → add <b>Arabic</b> (or install Google TTS).",
+                 ur:"🔇 <b>آواز نہیں آ رہی؟</b> اس ڈیوائس پر <b>عربی آواز</b> انسٹال نہیں ہے۔<br>Settings → Languages → <b>Arabic</b> شامل کریں۔",
+                 ar:"🔇 <b>لا يوجد صوت؟</b> لا يوجد <b>صوت عربي</b> مثبّت على هذا الجهاز.<br>الإعدادات → اللغات → أضف <b>العربية</b>."}
+};
+
+let UI_LANG = localStorage.getItem('misbah.uilang') || 'en';
+
+function T(key, vars){
+  const row=T_DICT[key];
+  let s = row ? (row[UI_LANG] || row.en) : key;
+  if(vars) Object.keys(vars).forEach(k=> s=s.split('{'+k+'}').join(vars[k]));
+  return s;
+}
+function setLang(code){
+  UI_LANG=code;
+  localStorage.setItem('misbah.uilang',code);
+  document.documentElement.lang=code;
+  document.documentElement.dir=LANGS[code].dir;
+  applyLang();
+}
+function applyLang(){
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const k=el.getAttribute('data-i18n');
+    if(el.hasAttribute('data-i18n-html')) el.innerHTML=T(k); else el.textContent=T(k);
+  });
+  document.querySelectorAll('[data-i18n-ph]').forEach(el=>{ el.placeholder=T(el.getAttribute('data-i18n-ph')); });
+  document.querySelectorAll('.lang-pick button').forEach(b=> b.classList.toggle('on', b.dataset.l===UI_LANG));
+}
 
 /* ============================================================
    1. QAIDA_CONFIG  — ALL learning content lives here.
@@ -766,54 +989,54 @@ const QAIDA_CONFIG = {
   // Always taught first, before the letters
   opening:[
     { arabic:"أَعُوذُ بِاللَّهِ مِنَ الشَّيْطَانِ الرَّجِيمِ",
-      hint:{ur:"شیطان سے اللہ کی پناہ مانگتے ہیں", en:"We seek Allah's protection from Shaitan"} },
+      hint:{ur:"شیطان سے اللہ کی پناہ مانگتے ہیں", en:"We seek Allah's protection from Shaitan", ar:"نستعيذ بالله من الشيطان"} },
     { arabic:"بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ",
-      hint:{ur:"اللہ کے نام سے شروع", en:"In the name of Allah, the Most Merciful"} }
+      hint:{ur:"اللہ کے نام سے شروع", en:"In the name of Allah, the Most Merciful", ar:"باسم الله الرحمن الرحيم"} }
   ],
 
   // Lessons — each has items. First lesson = the Arabic letters (huroof-e-tahajji)
   lessons:[
     {
       id:"letters-1", icon:"🔤", type:"letters",
-      title:{ur:"حروفِ تہجی", en:"The Letters"},
+      title:{ur:"حروفِ تہجی", en:"The Letters", ar:"الحروف الهجائية"},
       items:[
-        {letter:"ا", name:"Alif",  visual:"🪄", mnemonic:{ur:"سیدھی کھڑی لاٹھی جیسا",   en:"A tall straight stick"}},
-        {letter:"ب", name:"Ba",    visual:"🛶", mnemonic:{ur:"کشتی، نیچے ایک نقطہ",       en:"A boat with one dot below"}},
-        {letter:"ت", name:"Ta",    visual:"🛶", mnemonic:{ur:"کشتی، اوپر دو نقطے",        en:"A boat with two dots on top"}},
-        {letter:"ث", name:"Sa",    visual:"🛶", mnemonic:{ur:"کشتی، اوپر تین نقطے",       en:"A boat with three dots on top"}},
-        {letter:"ج", name:"Jeem",  visual:"🥣", mnemonic:{ur:"پیٹ، اندر ایک نقطہ",        en:"A curved belly, one dot inside"}},
-        {letter:"ح", name:"Hha",   visual:"🥣", mnemonic:{ur:"پیٹ، کوئی نقطہ نہیں",       en:"A curved belly, no dots"}},
-        {letter:"خ", name:"Kha",   visual:"🥣", mnemonic:{ur:"پیٹ، اوپر ایک نقطہ",        en:"A curved belly, one dot above"}},
-        {letter:"د", name:"Dal",   visual:"🪝", mnemonic:{ur:"چھوٹی سی ہُک",             en:"A little hook"}},
-        {letter:"ذ", name:"Zal",   visual:"🪝", mnemonic:{ur:"ہُک، اوپر ایک نقطہ",        en:"A hook with one dot above"}},
-        {letter:"ر", name:"Ra",    visual:"🎣", mnemonic:{ur:"جھکی ہوئی چھڑی",           en:"A bending stick"}},
-        {letter:"ز", name:"Za",    visual:"🎣", mnemonic:{ur:"جھکی چھڑی، اوپر نقطہ",      en:"A bending stick, dot on top"}},
-        {letter:"س", name:"Seen",  visual:"🦷", mnemonic:{ur:"تین چھوٹے دانت",           en:"Three little teeth"}},
-        {letter:"ش", name:"Sheen", visual:"🦷", mnemonic:{ur:"تین دانت، اوپر تین نقطے",   en:"Three teeth, three dots above"}},
-        {letter:"ص", name:"Saad",  visual:"🦆", mnemonic:{ur:"بطخ جیسا",                 en:"Shaped like a duck"}},
-        {letter:"ض", name:"Zaad",  visual:"🦆", mnemonic:{ur:"بطخ، اوپر ایک نقطہ",        en:"A duck with one dot above"}},
-        {letter:"ط", name:"Toa",   visual:"🏑", mnemonic:{ur:"کھڑی لاٹھی والا",          en:"With a tall standing stick"}},
-        {letter:"ظ", name:"Zoa",   visual:"🏑", mnemonic:{ur:"کھڑی لاٹھی، اوپر نقطہ",     en:"Tall stick, one dot above"}},
-        {letter:"ع", name:"Ain",   visual:"👄", mnemonic:{ur:"کھلا منہ جیسا",            en:"Like an open mouth"}},
-        {letter:"غ", name:"Ghain", visual:"👄", mnemonic:{ur:"کھلا منہ، اوپر نقطہ",       en:"Open mouth, one dot above"}},
-        {letter:"ف", name:"Fa",    visual:"⭕", mnemonic:{ur:"گول سر، اوپر ایک نقطہ",     en:"A round head, one dot above"}},
-        {letter:"ق", name:"Qaf",   visual:"⭕", mnemonic:{ur:"گول سر، اوپر دو نقطے",      en:"A round head, two dots above"}},
-        {letter:"ك", name:"Kaf",   visual:"🔑", mnemonic:{ur:"چابی جیسا",               en:"Shaped like a key"}},
-        {letter:"ل", name:"Laam",  visual:"🏒", mnemonic:{ur:"لمبی مڑی ہوئی چھڑی",       en:"A tall curved stick"}},
-        {letter:"م", name:"Meem",  visual:"🎈", mnemonic:{ur:"گول سر، ساتھ دُم",         en:"A round head with a tail"}},
-        {letter:"ن", name:"Noon",  visual:"🥣", mnemonic:{ur:"پیالی، اوپر ایک نقطہ",      en:"A bowl with one dot above"}},
-        {letter:"و", name:"Waw",   visual:"🫧", mnemonic:{ur:"گول موتی جیسا",            en:"Round like a bubble"}},
-        {letter:"ه", name:"Ha",    visual:"💗", mnemonic:{ur:"گول سا دل جیسا",           en:"Like a little round heart"}},
-        {letter:"ء", name:"Hamza", visual:"✂️", mnemonic:{ur:"چھوٹی جھٹکے والی",         en:"A small quick jerk"}},
-        {letter:"ي", name:"Ya",    visual:"🛶", mnemonic:{ur:"کشتی، نیچے دو نقطے",        en:"A boat with two dots below"}}
+        {letter:"ا", name:"Alif",  visual:"🪄", mnemonic:{ur:"سیدھی کھڑی لاٹھی جیسا",   en:"A tall straight stick", ar:"عصا طويلة مستقيمة"}},
+        {letter:"ب", name:"Ba",    visual:"🛶", mnemonic:{ur:"کشتی، نیچے ایک نقطہ",       en:"A boat with one dot below", ar:"قارب ونقطة تحته"}},
+        {letter:"ت", name:"Ta",    visual:"🛶", mnemonic:{ur:"کشتی، اوپر دو نقطے",        en:"A boat with two dots on top", ar:"قارب ونقطتان فوقه"}},
+        {letter:"ث", name:"Sa",    visual:"🛶", mnemonic:{ur:"کشتی، اوپر تین نقطے",       en:"A boat with three dots on top", ar:"قارب وثلاث نقاط فوقه"}},
+        {letter:"ج", name:"Jeem",  visual:"🥣", mnemonic:{ur:"پیٹ، اندر ایک نقطہ",        en:"A curved belly, one dot inside", ar:"بطن منحني وبداخله نقطة"}},
+        {letter:"ح", name:"Hha",   visual:"🥣", mnemonic:{ur:"پیٹ، کوئی نقطہ نہیں",       en:"A curved belly, no dots", ar:"بطن منحني بلا نقاط"}},
+        {letter:"خ", name:"Kha",   visual:"🥣", mnemonic:{ur:"پیٹ، اوپر ایک نقطہ",        en:"A curved belly, one dot above", ar:"بطن منحني ونقطة فوقه"}},
+        {letter:"د", name:"Dal",   visual:"🪝", mnemonic:{ur:"چھوٹی سی ہُک",             en:"A little hook", ar:"خطّاف صغير"}},
+        {letter:"ذ", name:"Zal",   visual:"🪝", mnemonic:{ur:"ہُک، اوپر ایک نقطہ",        en:"A hook with one dot above", ar:"خطّاف ونقطة فوقه"}},
+        {letter:"ر", name:"Ra",    visual:"🎣", mnemonic:{ur:"جھکی ہوئی چھڑی",           en:"A bending stick", ar:"عصا منحنية"}},
+        {letter:"ز", name:"Za",    visual:"🎣", mnemonic:{ur:"جھکی چھڑی، اوپر نقطہ",      en:"A bending stick, dot on top", ar:"عصا منحنية ونقطة فوقها"}},
+        {letter:"س", name:"Seen",  visual:"🦷", mnemonic:{ur:"تین چھوٹے دانت",           en:"Three little teeth", ar:"ثلاث أسنان صغيرة"}},
+        {letter:"ش", name:"Sheen", visual:"🦷", mnemonic:{ur:"تین دانت، اوپر تین نقطے",   en:"Three teeth, three dots above", ar:"ثلاث أسنان وثلاث نقاط"}},
+        {letter:"ص", name:"Saad",  visual:"🦆", mnemonic:{ur:"بطخ جیسا",                 en:"Shaped like a duck", ar:"يشبه البطة"}},
+        {letter:"ض", name:"Zaad",  visual:"🦆", mnemonic:{ur:"بطخ، اوپر ایک نقطہ",        en:"A duck with one dot above", ar:"بطة ونقطة فوقها"}},
+        {letter:"ط", name:"Toa",   visual:"🏑", mnemonic:{ur:"کھڑی لاٹھی والا",          en:"With a tall standing stick", ar:"له عصا قائمة"}},
+        {letter:"ظ", name:"Zoa",   visual:"🏑", mnemonic:{ur:"کھڑی لاٹھی، اوپر نقطہ",     en:"Tall stick, one dot above", ar:"عصا قائمة ونقطة فوقها"}},
+        {letter:"ع", name:"Ain",   visual:"👄", mnemonic:{ur:"کھلا منہ جیسا",            en:"Like an open mouth", ar:"مثل فم مفتوح"}},
+        {letter:"غ", name:"Ghain", visual:"👄", mnemonic:{ur:"کھلا منہ، اوپر نقطہ",       en:"Open mouth, one dot above", ar:"فم مفتوح ونقطة فوقه"}},
+        {letter:"ف", name:"Fa",    visual:"⭕", mnemonic:{ur:"گول سر، اوپر ایک نقطہ",     en:"A round head, one dot above", ar:"رأس مستدير ونقطة فوقه"}},
+        {letter:"ق", name:"Qaf",   visual:"⭕", mnemonic:{ur:"گول سر، اوپر دو نقطے",      en:"A round head, two dots above", ar:"رأس مستدير ونقطتان فوقه"}},
+        {letter:"ك", name:"Kaf",   visual:"🔑", mnemonic:{ur:"چابی جیسا",               en:"Shaped like a key", ar:"يشبه المفتاح"}},
+        {letter:"ل", name:"Laam",  visual:"🏒", mnemonic:{ur:"لمبی مڑی ہوئی چھڑی",       en:"A tall curved stick", ar:"عصا طويلة منحنية"}},
+        {letter:"م", name:"Meem",  visual:"🎈", mnemonic:{ur:"گول سر، ساتھ دُم",         en:"A round head with a tail", ar:"رأس مستدير وله ذيل"}},
+        {letter:"ن", name:"Noon",  visual:"🥣", mnemonic:{ur:"پیالی، اوپر ایک نقطہ",      en:"A bowl with one dot above", ar:"وعاء ونقطة فوقه"}},
+        {letter:"و", name:"Waw",   visual:"🫧", mnemonic:{ur:"گول موتی جیسا",            en:"Round like a bubble", ar:"مستدير مثل الفقاعة"}},
+        {letter:"ه", name:"Ha",    visual:"💗", mnemonic:{ur:"گول سا دل جیسا",           en:"Like a little round heart", ar:"مثل قلب صغير مستدير"}},
+        {letter:"ء", name:"Hamza", visual:"✂️", mnemonic:{ur:"چھوٹی جھٹکے والی",         en:"A small quick jerk", ar:"وقفة صغيرة سريعة"}},
+        {letter:"ي", name:"Ya",    visual:"🛶", mnemonic:{ur:"کشتی، نیچے دو نقطے",        en:"A boat with two dots below", ar:"قارب ونقطتان تحته"}}
       ]
     },
 
     // ---- Harakat: zabar / zer / pesh ----
     {
       id:"harakat", icon:"◌َ", type:"harakat",
-      title:{ur:"حرکات — زبر، زیر، پیش", en:"Harakat — Vowels"},
-      intro:{ur:"زبر (اوپر) = اَ ، زیر (نیچے) = اِ ، پیش (اوپر گول) = اُ", en:"Zabar = a, Zer = i, Pesh = u"},
+      title:{ur:"حرکات — زبر، زیر، پیش", en:"Harakat — Vowels", ar:"الحركات"},
+      intro:{ur:"زبر (اوپر) = اَ ، زیر (نیچے) = اِ ، پیش (اوپر گول) = اُ", en:"Fatha = a, Kasra = i, Damma = u", ar:"الفتحة = a ، الكسرة = i ، الضمة = u"},
       items:[
         {letter:"ا",name:"Alif"},{letter:"ب",name:"Ba"},{letter:"ت",name:"Ta"},
         {letter:"ج",name:"Jeem"},{letter:"د",name:"Dal"},{letter:"ر",name:"Ra"},
@@ -826,8 +1049,8 @@ const QAIDA_CONFIG = {
     // ---- Jorr: joining letters ----
     {
       id:"jorr", icon:"🔗", type:"joined",
-      title:{ur:"حروف ملانا (جوڑ)", en:"Joining Letters"},
-      intro:{ur:"دو یا تین حرف مل کر پڑھو", en:"Read two or three letters joined"},
+      title:{ur:"حروف ملانا (جوڑ)", en:"Joining Letters", ar:"وصل الحروف"},
+      intro:{ur:"دو یا تین حرف مل کر پڑھو", en:"Read two or three letters joined", ar:"اقرأ حرفين أو ثلاثة موصولة"},
       items:[
         {arabic:"بَتَ", tr:"ba-ta"},
         {arabic:"سَمَ", tr:"sa-ma"},
@@ -843,8 +1066,8 @@ const QAIDA_CONFIG = {
     // ---- Madd letters ----
     {
       id:"madd", icon:"〰️", type:"rule",
-      title:{ur:"حروفِ مد", en:"Letters of Madd"},
-      rule:{ur:"تین حرف آواز کو لمبا کرتے ہیں: ا ، و ، ی", en:"Three letters stretch the sound: ا و ي"},
+      title:{ur:"حروفِ مد", en:"Letters of Madd", ar:"حروف المد"},
+      rule:{ur:"تین حرف آواز کو لمبا کرتے ہیں: ا ، و ، ی", en:"Three letters stretch the sound: ا و ي", ar:"ثلاثة حروف تمدّ الصوت: ا و ي"},
       items:[
         {arabic:"بَا", tr:"baa — long a"},
         {arabic:"بُو", tr:"buu — long u"},
@@ -857,8 +1080,8 @@ const QAIDA_CONFIG = {
     // ---- Qalqalah ----
     {
       id:"qalqalah", icon:"🔔", type:"rule",
-      title:{ur:"قلقلہ", en:"Qalqalah"},
-      rule:{ur:"پانچ حرف جن میں ہلکی گونج آتی ہے: ق ط ب ج د (قُطُب جَدْ)", en:"Five echo letters: ق ط ب ج د"},
+      title:{ur:"قلقلہ", en:"Qalqalah", ar:"القلقلة"},
+      rule:{ur:"پانچ حرف جن میں ہلکی گونج آتی ہے: ق ط ب ج د (قُطُب جَدْ)", en:"Five echo letters: ق ط ب ج د", ar:"حروف القلقلة خمسة: قطب جد"},
       items:[
         {arabic:"اَقْ", tr:"aq — echo"},
         {arabic:"اَطْ", tr:"at"},
@@ -871,12 +1094,12 @@ const QAIDA_CONFIG = {
 
   // --- Sawal-Jawab (Q&A). Add more here anytime. ---
   quiz:[
-    { q:{ur:"یہ کون سا حرف ہے؟", en:"Which letter is this?"}, show:"ج", options:["Jeem","Seen","Meem"], answer:0 },
-    { q:{ur:"یہ کون سا حرف ہے؟", en:"Which letter is this?"}, show:"س", options:["Seen","Sheen","Saad"], answer:0 },
-    { q:{ur:"مد کے حروف کتنے ہیں؟", en:"How many Madd letters are there?"}, options:["2","3","4"], answer:1 },
-    { q:{ur:"زبر کی آواز کیا ہے؟", en:"What is the Zabar sound?"}, show:"بَ", options:["ba","bi","bu"], answer:0 },
-    { q:{ur:"پیش کی آواز؟", en:"What is the Pesh sound?"}, show:"بُ", options:["ba","bi","bu"], answer:2 },
-    { q:{ur:"قلقلہ کا ایک حرف کون سا ہے؟", en:"Which one is a Qalqalah letter?"}, options:["م","ق","ل"], answer:1 }
+    { q:{ur:"یہ کون سا حرف ہے؟", en:"Which letter is this?", ar:"ما هذا الحرف؟"}, show:"ج", options:["Jeem","Seen","Meem"], answer:0 },
+    { q:{ur:"یہ کون سا حرف ہے؟", en:"Which letter is this?", ar:"ما هذا الحرف؟"}, show:"س", options:["Seen","Sheen","Saad"], answer:0 },
+    { q:{ur:"مد کے حروف کتنے ہیں؟", en:"How many Madd letters are there?", ar:"كم عدد حروف المد؟"}, options:["2","3","4"], answer:1 },
+    { q:{ur:"زبر کی آواز کیا ہے؟", en:"What is the Zabar sound?", ar:"ما صوت الفتحة؟"}, show:"بَ", options:["ba","bi","bu"], answer:0 },
+    { q:{ur:"پیش کی آواز؟", en:"What is the Pesh sound?", ar:"ما صوت الضمة؟"}, show:"بُ", options:["ba","bi","bu"], answer:2 },
+    { q:{ur:"قلقلہ کا ایک حرف کون سا ہے؟", en:"Which one is a Qalqalah letter?", ar:"أيّها حرف قلقلة؟"}, options:["م","ق","ل"], answer:1 }
   ]
 };
 
@@ -884,63 +1107,63 @@ const QAIDA_CONFIG = {
    1b. DUAS + SALAH CONFIG — add/edit freely, UI won't change.
    ============================================================ */
 const DUAS = [
-  { id:"d1", icon:"🍽️", title:{ur:"کھانے سے پہلے", en:"Before eating"},
+  { id:"d1", icon:"🍽️", title:{ur:"کھانے سے پہلے", en:"Before eating", ar:"قبل الطعام"},
     arabic:"بِسْمِ اللَّهِ",
     tr:"Bismillah",
-    mean:{ur:"اللہ کے نام سے (شروع کرتا ہوں)", en:"In the name of Allah"} },
-  { id:"d2", icon:"✅", title:{ur:"کھانے کے بعد", en:"After eating"},
+    mean:{ur:"اللہ کے نام سے (شروع کرتا ہوں)", en:"In the name of Allah", ar:"باسم الله"} },
+  { id:"d2", icon:"✅", title:{ur:"کھانے کے بعد", en:"After eating", ar:"بعد الطعام"},
     arabic:"اَلْحَمْدُ لِلَّهِ الَّذِي أَطْعَمَنَا وَسَقَانَا وَجَعَلَنَا مُسْلِمِينَ",
     tr:"Alhamdulillahilladhi at'amana wa saqana wa ja'alana muslimeen",
-    mean:{ur:"سب تعریف اللہ کے لیے جس نے ہمیں کھلایا، پلایا اور مسلمان بنایا", en:"Praise be to Allah who fed us, gave us drink, and made us Muslims"} },
-  { id:"d3", icon:"😴", title:{ur:"سونے سے پہلے", en:"Before sleeping"},
+    mean:{ur:"سب تعریف اللہ کے لیے جس نے ہمیں کھلایا، پلایا اور مسلمان بنایا", en:"Praise be to Allah who fed us, gave us drink, and made us Muslims", ar:"الحمد لله الذي أطعمنا وسقانا وجعلنا مسلمين"} },
+  { id:"d3", icon:"😴", title:{ur:"سونے سے پہلے", en:"Before sleeping", ar:"قبل النوم"},
     arabic:"اَللَّهُمَّ بِاسْمِكَ أَمُوتُ وَأَحْيَا",
     tr:"Allahumma bismika amootu wa ahya",
-    mean:{ur:"اے اللہ! تیرے نام سے میں مرتا ہوں اور جیتا ہوں", en:"O Allah, in Your name I die and I live"} },
-  { id:"d4", icon:"🌅", title:{ur:"جاگنے کے بعد", en:"After waking up"},
+    mean:{ur:"اے اللہ! تیرے نام سے میں مرتا ہوں اور جیتا ہوں", en:"O Allah, in Your name I die and I live", ar:"اللهم باسمك أموت وأحيا"} },
+  { id:"d4", icon:"🌅", title:{ur:"جاگنے کے بعد", en:"After waking up", ar:"عند الاستيقاظ"},
     arabic:"اَلْحَمْدُ لِلَّهِ الَّذِي أَحْيَانَا بَعْدَ مَا أَمَاتَنَا وَإِلَيْهِ النُّشُورُ",
     tr:"Alhamdulillahilladhi ahyana ba'da ma amatana wa ilayhin-nushoor",
-    mean:{ur:"سب تعریف اللہ کے لیے جس نے موت کے بعد ہمیں زندہ کیا، اور اسی کی طرف لوٹنا ہے", en:"Praise be to Allah who gave us life after death, and to Him is the return"} },
-  { id:"d5", icon:"🚪", title:{ur:"گھر سے نکلتے وقت", en:"Leaving the house"},
+    mean:{ur:"سب تعریف اللہ کے لیے جس نے موت کے بعد ہمیں زندہ کیا، اور اسی کی طرف لوٹنا ہے", en:"Praise be to Allah who gave us life after death, and to Him is the return", ar:"الحمد لله الذي أحيانا بعد ما أماتنا وإليه النشور"} },
+  { id:"d5", icon:"🚪", title:{ur:"گھر سے نکلتے وقت", en:"Leaving the house", ar:"عند الخروج من البيت"},
     arabic:"بِسْمِ اللَّهِ تَوَكَّلْتُ عَلَى اللَّهِ وَلَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ",
     tr:"Bismillahi tawakkaltu 'alallah, wa la hawla wa la quwwata illa billah",
-    mean:{ur:"اللہ کے نام سے، میں نے اللہ پر بھروسہ کیا، اور اللہ کے بغیر نہ کوئی طاقت ہے نہ قوت", en:"In the name of Allah, I trust in Allah; there is no power except with Allah"} },
-  { id:"d6", icon:"🚿", title:{ur:"بیت الخلاء میں جاتے وقت", en:"Entering the washroom"},
+    mean:{ur:"اللہ کے نام سے، میں نے اللہ پر بھروسہ کیا، اور اللہ کے بغیر نہ کوئی طاقت ہے نہ قوت", en:"In the name of Allah, I trust in Allah; there is no power except with Allah", ar:"باسم الله توكلت على الله ولا حول ولا قوة إلا بالله"} },
+  { id:"d6", icon:"🚿", title:{ur:"بیت الخلاء میں جاتے وقت", en:"Entering the washroom", ar:"عند دخول الخلاء"},
     arabic:"بِسْمِ اللَّهِ، اَللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْخُبُثِ وَالْخَبَائِثِ",
     tr:"Bismillah, Allahumma inni a'oodhu bika minal khubuthi wal khaba'ith",
-    mean:{ur:"اللہ کے نام سے۔ اے اللہ! میں تیری پناہ مانگتا ہوں ناپاک جنّوں اور جنّیوں سے", en:"In the name of Allah. O Allah, I seek Your protection from evil jinn, male and female"} },
-  { id:"d7", icon:"📖", title:{ur:"علم میں اضافے کی دعا", en:"Dua for knowledge"},
+    mean:{ur:"اللہ کے نام سے۔ اے اللہ! میں تیری پناہ مانگتا ہوں ناپاک جنّوں اور جنّیوں سے", en:"In the name of Allah. O Allah, I seek Your protection from evil jinn, male and female", ar:"اللهم إني أعوذ بك من الخبث والخبائث"} },
+  { id:"d7", icon:"📖", title:{ur:"علم میں اضافے کی دعا", en:"Dua for knowledge", ar:"دعاء طلب العلم"},
     arabic:"رَبِّ زِدْنِي عِلْمًا",
     tr:"Rabbi zidni 'ilma",
-    mean:{ur:"اے میرے رب! میرے علم میں اضافہ فرما", en:"My Lord, increase me in knowledge"} },
-  { id:"d8", icon:"🚗", title:{ur:"سواری پر بیٹھتے وقت", en:"Riding a vehicle"},
+    mean:{ur:"اے میرے رب! میرے علم میں اضافہ فرما", en:"My Lord, increase me in knowledge", ar:"رب زدني علماً"} },
+  { id:"d8", icon:"🚗", title:{ur:"سواری پر بیٹھتے وقت", en:"Riding a vehicle", ar:"عند ركوب الدابة"},
     arabic:"سُبْحَانَ الَّذِي سَخَّرَ لَنَا هَٰذَا وَمَا كُنَّا لَهُ مُقْرِنِينَ",
     tr:"Subhanalladhi sakhkhara lana hadha wa ma kunna lahu muqrineen",
-    mean:{ur:"پاک ہے وہ ذات جس نے اسے ہمارے بس میں کیا", en:"Glory to Him who subjected this to us"} }
+    mean:{ur:"پاک ہے وہ ذات جس نے اسے ہمارے بس میں کیا", en:"Glory to Him who subjected this to us", ar:"سبحان الذي سخر لنا هذا وما كنا له مقرنين"} }
 ];
 
 const SALAH_STEPS = [
-  { icon:"🧼", title:{ur:"وضو", en:"Wudu"},
-    say:{ur:"پہلے وضو کریں — ہاتھ، منہ، بازو، سر اور پاؤں دھوئیں", en:"First make wudu — wash hands, face, arms, wipe head, wash feet"} },
-  { icon:"🧭", title:{ur:"نیت اور قبلہ", en:"Intention & Qibla"},
-    say:{ur:"قبلہ کی طرف کھڑے ہوں اور دل میں نیت کریں", en:"Face the Qibla and make the intention in your heart"} },
-  { icon:"🙌", title:{ur:"تکبیرِ تحریمہ", en:"Takbir"}, arabic:"اَللَّهُ أَكْبَرُ",
-    say:{ur:"دونوں ہاتھ کانوں تک اٹھا کر کہیں: اللہ اکبر", en:"Raise both hands to your ears and say: Allahu Akbar"} },
-  { icon:"🧍", title:{ur:"قیام — سورۃ الفاتحہ", en:"Qiyam — Al-Fatiha"}, arabic:"اَلْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ",
-    say:{ur:"ہاتھ باندھ کر سورۃ الفاتحہ پڑھیں، پھر کوئی سورت", en:"Fold your hands, recite Al-Fatiha, then a short surah"} },
-  { icon:"🙇", title:{ur:"رکوع", en:"Ruku"}, arabic:"سُبْحَانَ رَبِّيَ الْعَظِيمِ",
-    say:{ur:"جھک کر تین بار کہیں: سبحان ربی العظیم", en:"Bow down and say three times: Subhana Rabbiyal 'Azeem"} },
-  { icon:"🧍", title:{ur:"قومہ", en:"Standing up"}, arabic:"سَمِعَ اللَّهُ لِمَنْ حَمِدَهُ",
-    say:{ur:"سیدھے کھڑے ہوں: سمع اللہ لمن حمدہ — ربنا لک الحمد", en:"Stand up straight: Sami'Allahu liman hamidah — Rabbana lakal hamd"} },
-  { icon:"🤲", title:{ur:"سجدہ", en:"Sajdah"}, arabic:"سُبْحَانَ رَبِّيَ الْأَعْلَىٰ",
-    say:{ur:"سجدے میں جائیں اور تین بار کہیں: سبحان ربی الاعلیٰ", en:"Go into sajdah and say three times: Subhana Rabbiyal A'la"} },
-  { icon:"🧎", title:{ur:"جلسہ", en:"Sitting"}, arabic:"رَبِّ اغْفِرْ لِي",
-    say:{ur:"دو سجدوں کے درمیان بیٹھیں: رب اغفر لی", en:"Sit between the two sajdahs: Rabbighfir li"} },
-  { icon:"🧎", title:{ur:"تشہد", en:"Tashahhud"}, arabic:"اَلتَّحِيَّاتُ لِلَّهِ وَالصَّلَوَاتُ وَالطَّيِّبَاتُ",
-    say:{ur:"بیٹھ کر تشہد پڑھیں، اور شہادت کی انگلی اٹھائیں", en:"Sit and recite the Tashahhud, raising your index finger"} },
-  { icon:"🌸", title:{ur:"درود شریف", en:"Durood"}, arabic:"اَللَّهُمَّ صَلِّ عَلَىٰ مُحَمَّدٍ",
-    say:{ur:"نبی ﷺ پر درود بھیجیں", en:"Send blessings upon the Prophet ﷺ"} },
-  { icon:"👋", title:{ur:"سلام", en:"Salam"}, arabic:"اَلسَّلَامُ عَلَيْكُمْ وَرَحْمَةُ اللَّهِ",
-    say:{ur:"دائیں پھر بائیں طرف سلام پھیریں — نماز مکمل!", en:"Turn right then left saying Salam — prayer complete!"} }
+  { icon:"🧼", title:{ur:"وضو", en:"Wudu", ar:"الوضوء"},
+    say:{ur:"پہلے وضو کریں — ہاتھ، منہ، بازو، سر اور پاؤں دھوئیں", en:"First make wudu — wash hands, face, arms, wipe head, wash feet", ar:"توضّأ أولاً — اغسل اليدين والوجه والذراعين وامسح الرأس واغسل القدمين"} },
+  { icon:"🧭", title:{ur:"نیت اور قبلہ", en:"Intention & Qibla", ar:"النية والقبلة"},
+    say:{ur:"قبلہ کی طرف کھڑے ہوں اور دل میں نیت کریں", en:"Face the Qibla and make the intention in your heart", ar:"استقبل القبلة وانوِ بقلبك"} },
+  { icon:"🙌", title:{ur:"تکبیرِ تحریمہ", en:"Takbir", ar:"تكبيرة الإحرام"}, arabic:"اَللَّهُ أَكْبَرُ",
+    say:{ur:"دونوں ہاتھ کانوں تک اٹھا کر کہیں: اللہ اکبر", en:"Raise both hands to your ears and say: Allahu Akbar", ar:"ارفع يديك إلى أذنيك وقل: الله أكبر"} },
+  { icon:"🧍", title:{ur:"قیام — سورۃ الفاتحہ", en:"Qiyam — Al-Fatiha", ar:"القيام — الفاتحة"}, arabic:"اَلْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ",
+    say:{ur:"ہاتھ باندھ کر سورۃ الفاتحہ پڑھیں، پھر کوئی سورت", en:"Fold your hands, recite Al-Fatiha, then a short surah", ar:"اعقد يديك واقرأ الفاتحة ثم سورة قصيرة"} },
+  { icon:"🙇", title:{ur:"رکوع", en:"Ruku", ar:"الركوع"}, arabic:"سُبْحَانَ رَبِّيَ الْعَظِيمِ",
+    say:{ur:"جھک کر تین بار کہیں: سبحان ربی العظیم", en:"Bow down and say three times: Subhana Rabbiyal 'Azeem", ar:"اركع وقل ثلاثاً: سبحان ربي العظيم"} },
+  { icon:"🧍", title:{ur:"قومہ", en:"Standing up", ar:"الاعتدال"}, arabic:"سَمِعَ اللَّهُ لِمَنْ حَمِدَهُ",
+    say:{ur:"سیدھے کھڑے ہوں: سمع اللہ لمن حمدہ — ربنا لک الحمد", en:"Stand up straight: Sami'Allahu liman hamidah — Rabbana lakal hamd", ar:"اعتدل قائماً: سمع الله لمن حمده — ربنا لك الحمد"} },
+  { icon:"🤲", title:{ur:"سجدہ", en:"Sajdah", ar:"السجود"}, arabic:"سُبْحَانَ رَبِّيَ الْأَعْلَىٰ",
+    say:{ur:"سجدے میں جائیں اور تین بار کہیں: سبحان ربی الاعلیٰ", en:"Go into sajdah and say three times: Subhana Rabbiyal A'la", ar:"اسجد وقل ثلاثاً: سبحان ربي الأعلى"} },
+  { icon:"🧎", title:{ur:"جلسہ", en:"Sitting", ar:"الجلسة"}, arabic:"رَبِّ اغْفِرْ لِي",
+    say:{ur:"دو سجدوں کے درمیان بیٹھیں: رب اغفر لی", en:"Sit between the two sajdahs: Rabbighfir li", ar:"اجلس بين السجدتين: رب اغفر لي"} },
+  { icon:"🧎", title:{ur:"تشہد", en:"Tashahhud", ar:"التشهد"}, arabic:"اَلتَّحِيَّاتُ لِلَّهِ وَالصَّلَوَاتُ وَالطَّيِّبَاتُ",
+    say:{ur:"بیٹھ کر تشہد پڑھیں، اور شہادت کی انگلی اٹھائیں", en:"Sit and recite the Tashahhud, raising your index finger", ar:"اجلس واقرأ التشهد وارفع السبابة"} },
+  { icon:"🌸", title:{ur:"درود شریف", en:"Durood", ar:"الصلاة على النبي"}, arabic:"اَللَّهُمَّ صَلِّ عَلَىٰ مُحَمَّدٍ",
+    say:{ur:"نبی ﷺ پر درود بھیجیں", en:"Send blessings upon the Prophet ﷺ", ar:"صلِّ على النبي ﷺ"} },
+  { icon:"👋", title:{ur:"سلام", en:"Salam", ar:"التسليم"}, arabic:"اَلسَّلَامُ عَلَيْكُمْ وَرَحْمَةُ اللَّهِ",
+    say:{ur:"دائیں پھر بائیں طرف سلام پھیریں — نماز مکمل!", en:"Turn right then left saying Salam — prayer complete!", ar:"سلّم عن يمينك ثم عن يسارك — تمت الصلاة!"} }
 ];
 
 /* ============================================================
@@ -1073,17 +1296,16 @@ function renderProfiles(){
   });
   const add = document.createElement('div');
   add.className='pcard add';
-  add.innerHTML = `<div class="plus">+</div><div class="pname">Add child</div>`;
+  add.innerHTML = `<div class="plus">+</div><div class="pname">${T('addChild')}</div>`;
   add.onclick = ()=>newProfile();
   grid.appendChild(add);
 }
 
 function newProfile(){
   editingId=null; pickedAvatar=AVATARS[0];
-  document.getElementById('formTitle').textContent="New Child";
+  document.getElementById('formTitle').textContent=T('newChild');
   document.getElementById('fName').value="";
   document.getElementById('fAge').value="";
-  document.getElementById('fLang').value="ur";
   document.getElementById('deleteProfileBtn').style.display="none";
   renderAvatarPick();
   go('profileForm');
@@ -1091,10 +1313,9 @@ function newProfile(){
 function editProfile(id){
   const p = store.profiles.find(x=>x.id===id); if(!p) return;
   editingId=id; pickedAvatar=p.avatar;
-  document.getElementById('formTitle').textContent="Edit "+p.name;
+  document.getElementById('formTitle').textContent=T('editChild')+' — '+p.name;
   document.getElementById('fName').value=p.name;
   document.getElementById('fAge').value=p.age||"";
-  document.getElementById('fLang').value=p.lang||"ur";
   document.getElementById('deleteProfileBtn').style.display="block";
   renderAvatarPick();
   go('profileForm');
@@ -1119,12 +1340,11 @@ function saveProfile(){
   const name = document.getElementById('fName').value.trim();
   if(!name){ document.getElementById('fName').focus(); return; }
   const age = document.getElementById('fAge').value;
-  const lang = document.getElementById('fLang').value;
   if(editingId){
     const p = store.profiles.find(x=>x.id===editingId);
-    Object.assign(p,{name,age,lang,avatar:pickedAvatar});
+    Object.assign(p,{name,age,avatar:pickedAvatar});
   } else {
-    store.profiles.push({id:'p'+Date.now(),name,age,lang,avatar:pickedAvatar,progress:{}});
+    store.profiles.push({id:'p'+Date.now(),name,age,avatar:pickedAvatar,progress:{}});
   }
   save(); go('profiles');
 }
@@ -1135,7 +1355,7 @@ function delProfile(id){
 }
 function confirmDelete(){
   const p = store.profiles.find(x=>x.id===editingId); if(!p) return;
-  askConfirm('"'+p.name+'" ko delete karein?\nYe wapas nahi aayega.', ()=>{
+  askConfirm(T('confirmDelete',{n:p.name}), ()=>{
     delProfile(editingId);
     editingId=null;
     go('profiles');
@@ -1150,11 +1370,11 @@ function askConfirm(msg, cb, opt){
   const yes=document.getElementById('confirmYes');
   const no=document.querySelector('.modal-btns .btn.ghost');
   if(opt.info){                      // info popup: single OK button
-    yes.textContent='OK';
+    yes.textContent=T('ok');
     yes.classList.remove('coral'); yes.classList.add('gold');
     no.style.display='none';
   } else {                           // destructive confirm
-    yes.textContent='Delete';
+    yes.textContent=T('del');
     yes.classList.remove('gold'); yes.classList.add('coral');
     no.style.display='';
   }
@@ -1215,7 +1435,7 @@ function openQaidaHub(){
     const done=!!prog['quiz'];
     const c=document.createElement('div');
     c.className='hub-card quiz'+(done?' done':'');
-    c.innerHTML=`<div class="hub-ic">❓</div><div class="hub-tt">Sawal-Jawab</div>
+    c.innerHTML=`<div class="hub-ic">❓</div><div class="hub-tt">${T('quizName')}</div>
       ${done?'<div class="hub-done">✓</div>':'<div class="hub-no">🏁</div>'}`;
     c.onclick=()=>startQuiz();
     wrap.appendChild(c);
@@ -1248,7 +1468,7 @@ function startLesson(id){
 function renderStep(){
   const s=lesson.steps[lesson.index];
   const stage=document.getElementById('qStage');
-  const lang=(currentProfile()?.lang)||'ur';
+  const lang=UI_LANG;
 
   const dots=document.getElementById('qDots'); dots.innerHTML='';
   lesson.steps.forEach((_,i)=>{ const d=document.createElement('div');
@@ -1256,21 +1476,21 @@ function renderStep(){
 
   let inner=`<button class="speaker" onclick="event.stopPropagation();playCurrent()">🔊</button>`;
   if(s.type==='phrase'){
-    inner+=`<div class="kicker">${lesson.index===0?"Let's begin 🌙":'Bismillah'}</div>
+    inner+=`<div class="kicker">${lesson.index===0?T('letsBegin'):'Bismillah'}</div>
       <div class="big-phrase arabic">${s.arabic}</div>
-      <div class="mnemonic"><span class="mtext ${lang==='ur'?'urdu':''}">${escapeHtml(langText(s.hint))}</span></div>
-      <div class="tap-hint">Tap anywhere to hear 🔊</div>`;
+      <div class="mnemonic"><span class="mtext ${fontCls()}">${escapeHtml(langText(s.hint))}</span></div>
+      <div class="tap-hint">${T('tapHear')}</div>`;
   } else if(s.type==='letter'){
-    inner+=`<div class="kicker">Letter</div>
+    inner+=`<div class="kicker">${T('letter')}</div>
       <div class="big-letter">${s.letter}</div>
       <div class="letter-name">${s.name}</div>
       <div class="mnemonic"><span class="em">${s.visual}</span>
-        <span class="mtext ${lang==='ur'?'urdu':''}">${escapeHtml(langText(s.mnemonic))}</span></div>
-      <div class="tap-hint">Tap the letter to hear it 🔊</div>`;
+        <span class="mtext ${fontCls()}">${escapeHtml(langText(s.mnemonic))}</span></div>
+      <div class="tap-hint">${T('tapLetter')}</div>`;
   } else if(s.type==='rule'){
     inner+=`<div class="kicker">${escapeHtml(langText(s.title))}</div>
-      <div class="rule-text ${lang==='ur'?'urdu':''}">${escapeHtml(langText(s.ruleText))}</div>
-      <div class="tap-hint">Next › se aage barho</div>`;
+      <div class="rule-text ${fontCls()}">${escapeHtml(langText(s.ruleText))}</div>
+      <div class="tap-hint">${T('nextToGo')}</div>`;
   } else if(s.type==='harakat'){
     inner+=`<div class="kicker">${s.name} — zabar · zer · pesh</div>
       <div class="harakat-row">
@@ -1278,17 +1498,17 @@ function renderStep(){
         <div class="hk" onclick="event.stopPropagation();speak('${s.letter+HK.i}')"><div class="hk-l">${s.letter+HK.i}</div><div class="hk-s">i</div></div>
         <div class="hk" onclick="event.stopPropagation();speak('${s.letter+HK.u}')"><div class="hk-l">${s.letter+HK.u}</div><div class="hk-s">u</div></div>
       </div>
-      <div class="tap-hint">Har khaana tap karke suno 🔊</div>`;
+      <div class="tap-hint">${T('tapBox')}</div>`;
   } else { // joined or example
-    inner+=`<div class="kicker">${s.type==='joined'?'Read it':'Example'}</div>
+    inner+=`<div class="kicker">${s.type==='joined'?T('readIt'):T('example')}</div>
       <div class="big-phrase arabic">${s.arabic}</div>
       <div class="letter-name" style="font-size:1.05rem;color:var(--ink-soft)">${escapeHtml(s.tr||'')}</div>
-      <div class="tap-hint">Tap to hear it 🔊</div>`;
+      <div class="tap-hint">${T('tapHear')}</div>`;
   }
   stage.innerHTML=inner;
 
   document.getElementById('prevBtn').disabled=lesson.index===0;
-  document.getElementById('nextBtn').textContent=(lesson.index===lesson.steps.length-1)?"Finish 🎉":"Next ›";
+  document.getElementById('nextBtn').textContent=(lesson.index===lesson.steps.length-1)?T('finish'):T('next');
   setTimeout(playCurrent,250);
 }
 
@@ -1307,7 +1527,7 @@ function prevStep(){ if(lesson.index>0){ lesson.index--; renderStep(); } }
 function finishLesson(){
   const p=currentProfile();
   if(p){ p.progress=p.progress||{}; p.progress[lesson.lessonId]=true; save(); }
-  showReward("Shabash, "+(p?.name||'Dost')+"! 🎉","Lesson complete!");
+  showReward(T('shabash',{n:(p?.name||'')}), T('lessonDone'));
 }
 
 /* ---- Quiz (Sawal-Jawab) ---- */
@@ -1318,11 +1538,11 @@ function startQuiz(){
 }
 function renderQuiz(){
   const q=quizState.items[quizState.index];
-  const lang=(currentProfile()?.lang)||'ur';
+  const lang=UI_LANG;
   document.getElementById('quizProgress').textContent=(quizState.index+1)+' / '+quizState.items.length;
   const box=document.getElementById('quizBox');
   box.innerHTML=`
-    <div class="q-text ${lang==='ur'?'urdu':''}">${escapeHtml(langText(q.q))}</div>
+    <div class="q-text ${fontCls()}">${escapeHtml(langText(q.q))}</div>
     ${q.show?`<div class="q-show arabic" onclick="speak('${q.show}')">${q.show}</div>`:''}
     <div class="q-options" id="qOptions"></div>`;
   const opts=document.getElementById('qOptions');
@@ -1348,7 +1568,7 @@ function answerQuiz(i,btn){
 function finishQuiz(){
   const p=currentProfile();
   if(p){ p.progress=p.progress||{}; p.progress['quiz']=true; save(); }
-  showReward("MashaAllah! 🌟","Score: "+quizState.score+" / "+quizState.items.length);
+  showReward(T('mashaAllah'), T('score')+': '+quizState.score+' / '+quizState.items.length);
 }
 
 let _rewardBack='qaidaHub';
@@ -1384,7 +1604,7 @@ function nextRound(){
   game.target=all[Math.floor(Math.random()*all.length)];
   const others=shuffle(all.filter(x=>x.letter!==game.target.letter)).slice(0,5);
   const choices=shuffle(others.concat([game.target]));
-  document.getElementById('gRound').textContent='Round '+game.round+'/'+game.total;
+  document.getElementById('gRound').textContent=T('round',{a:game.round,b:game.total});
   document.getElementById('gCombo').textContent='🔥 '+game.combo;
   document.getElementById('gScore').textContent='⭐ '+game.points;
   document.getElementById('gTarget').textContent=game.target.name;
@@ -1427,10 +1647,10 @@ function showGameResult(){
   r.innerHTML=`
     <div style="text-align:center;padding:24px 10px">
       <div style="font-size:64px;letter-spacing:4px">${'⭐'.repeat(stars)}${'☆'.repeat(3-stars)}</div>
-      <div class="reward-title">${stars===3?'MashaAllah!':'Shabash!'} 🎉</div>
-      <div class="sub">Score: ⭐ ${game.points} &nbsp;·&nbsp; Perfect: ${game.perfect}/${game.total}</div>
-      <button class="btn gold block" style="margin-top:18px" onclick="startGame()">Play again 🔁</button>
-      <button class="btn ghost block" style="margin-top:10px" onclick="go('menu')">Back to menu 🏠</button>
+      <div class="reward-title">${T('mashaAllah')}</div>
+      <div class="sub">${T('score')}: ⭐ ${game.points} &nbsp;·&nbsp; ${T('perfect')}: ${game.perfect}/${game.total}</div>
+      <button class="btn gold block" style="margin-top:18px" onclick="startGame()">${T('playAgain')}</button>
+      <button class="btn ghost block" style="margin-top:10px" onclick="go('menu')">${T('backMenu')}</button>
     </div>`;
   confetti(true);
   setTimeout(()=>speak((p?.name||'')+" ما شاء الله"),300);
@@ -1476,7 +1696,7 @@ async function openNazra(){
         const r=await fetch(QAPI+'/surah'); const j=await r.json();
         surahs=j.data; cacheSet('surahs',surahs);
       }catch(e){
-        document.getElementById('surahList').innerHTML='<div class="loading">Internet nahi hai 😕<br>Pehli baar surah list ke liye internet chahiye.</div>';
+        document.getElementById('surahList').innerHTML='<div class="loading">'+T('needNet')+'</div>';
         return;
       }
     }
@@ -1488,13 +1708,13 @@ function renderSurahList(){
   const wrap=document.getElementById('surahList');
   const list=surahs.filter(s=> !q || s.englishName.toLowerCase().includes(q) ||
       String(s.number)===q || (s.englishNameTranslation||'').toLowerCase().includes(q));
-  if(!list.length){ wrap.innerHTML='<div class="loading">Koi surah nahi mili</div>'; return; }
+  if(!list.length){ wrap.innerHTML='<div class="loading">'+T('noSurah')+'</div>'; return; }
   wrap.innerHTML='';
   list.forEach(s=>{
     const d=document.createElement('div'); d.className='surah-row';
     d.innerHTML=`<div class="s-no">${s.number}</div>
       <div class="s-mid"><div class="s-name">${escapeHtml(s.englishName)}</div>
-        <div class="s-sub">${escapeHtml(s.englishNameTranslation||'')} · ${s.numberOfAyahs} ayah</div></div>
+        <div class="s-sub">${escapeHtml(s.englishNameTranslation||'')} · ${s.numberOfAyahs} ${T('ayahs')}</div></div>
       <div class="s-ar">${s.name}</div>`;
     d.onclick=()=>loadSurah(s.number);
     wrap.appendChild(d);
@@ -1506,8 +1726,8 @@ function renderLastRead(){
   const box=document.getElementById('lastRead');
   if(!lr){ box.innerHTML=''; return; }
   box.innerHTML=`<div class="last-read" onclick="loadSurah(${lr.surah},false,${lr.ayah})">
-      <div class="lr-t">📖 Jahan chhoda tha</div>
-      <div class="lr-n">${escapeHtml(lr.name)} · Ayah ${lr.ayah+1}</div></div>`;
+      <div class="lr-t">${T('whereLeft')}</div>
+      <div class="lr-n">${escapeHtml(lr.name)} · ${T('ayah')} ${lr.ayah+1}</div></div>`;
 }
 
 /* ---- load & render a surah ---- */
@@ -1515,7 +1735,7 @@ async function loadSurah(n, silent, jumpTo){
   stopAudio();
   const key='s'+n+'.'+settings.reciter;
   go('reader');
-  document.getElementById('ayahList').innerHTML='<div class="loading">Loading… ⏳</div>';
+  document.getElementById('ayahList').innerHTML='<div class="loading">'+T('loading')+'</div>';
   let data=cacheGet(key);
   if(!data){
     try{
@@ -1526,7 +1746,7 @@ async function loadSurah(n, silent, jumpTo){
              ayahs:text.ayahs.map((a,i)=>({ n:a.numberInSurah, text:a.text, audio:(aud.ayahs[i]||{}).audio })) };
       cacheSet(key,data);
     }catch(e){
-      document.getElementById('ayahList').innerHTML='<div class="loading">Load nahi hua 😕<br>Internet check karein.</div>';
+      document.getElementById('ayahList').innerHTML='<div class="loading">'+T('loadFail')+'</div>';
       return;
     }
   }
@@ -1589,13 +1809,13 @@ function stopAudio(){
 function toggleAuto(){
   nz.auto=!nz.auto;
   const b=document.getElementById('rbAuto');
-  b.textContent='🔁 Auto: '+(nz.auto?'on':'off');
+  b.textContent=T('rAuto',{v: nz.auto?T('on'):T('off')});
   b.classList.toggle('on',nz.auto);
 }
 function cycleRepeat(){
   nz.repeat = nz.repeat===1?3 : nz.repeat===3?5 : 1;
   const b=document.getElementById('rbRep');
-  b.textContent='Repeat: '+nz.repeat+'x';
+  b.textContent=T('rRepeat',{v:nz.repeat});
   b.classList.toggle('on',nz.repeat>1);
 }
 function saveLastRead(i){
@@ -1626,12 +1846,12 @@ function openHifz(){
   const manzil=known.filter(k=> now-(H[k].last||0) > 7*DAY );
   document.getElementById('hifzStats').innerHTML=
     `<div class="hifz-stat">
-       <div><b>${known.length}</b><span>Ayat yaad</span></div>
-       <div><b>${sabqi.length}</b><span>Sabqi</span></div>
-       <div><b>${manzil.length}</b><span>Manzil</span></div>
+       <div><b>${known.length}</b><span>${T('ayatMemo')}</span></div>
+       <div><b>${sabqi.length}</b><span>${T('sabqi')}</span></div>
+       <div><b>${manzil.length}</b><span>${T('manzil')}</span></div>
      </div>`;
-  document.getElementById('sabqiCount').textContent = sabqi.length? sabqi.length+' ayat revision ke liye' : 'Abhi kuch nahi';
-  document.getElementById('manzilCount').textContent = manzil.length? manzil.length+' ayat purani revision' : 'Abhi kuch nahi';
+  document.getElementById('sabqiCount').textContent = sabqi.length? T('forRevision',{n:sabqi.length}) : T('nothingYet');
+  document.getElementById('manzilCount').textContent = manzil.length? T('forRevision',{n:manzil.length}) : T('nothingYet');
   document.getElementById('hifzListHead').style.display='none';
   document.getElementById('hifzSearch').style.display='none';
   document.getElementById('hifzSurahList').innerHTML='';
@@ -1646,9 +1866,9 @@ async function pickHifzSurah(){
     const cached=cacheGet('surahs');
     if(cached) surahs=cached;
     else{
-      document.getElementById('hifzSurahList').innerHTML='<div class="loading">Loading… ⏳</div>';
+      document.getElementById('hifzSurahList').innerHTML='<div class="loading">'+T('loading')+'</div>';
       try{ const r=await fetch(QAPI+'/surah'); surahs=(await r.json()).data; cacheSet('surahs',surahs); }
-      catch(e){ document.getElementById('hifzSurahList').innerHTML='<div class="loading">Internet chahiye 😕</div>'; return; }
+      catch(e){ document.getElementById('hifzSurahList').innerHTML='<div class="loading">'+T('needNet')+'</div>'; return; }
     }
   }
   renderHifzSurahs();
@@ -1666,7 +1886,7 @@ function renderHifzSurahs(){
     const d=document.createElement('div'); d.className='surah-row';
     d.innerHTML=`<div class="s-no">${s.number}</div>
       <div class="s-mid"><div class="s-name">${escapeHtml(s.englishName)}</div>
-        <div class="s-sub">${s.numberOfAyahs} ayah${done?` · ✅ ${done} yaad`:''}</div></div>
+        <div class="s-sub">${s.numberOfAyahs} ${T('ayahs')}${done?` · ✅ ${done} ${T('memorised')}`:''}</div></div>
       <div class="s-ar">${s.name}</div>`;
     d.onclick=()=>startSabaq(s.number);
     wrap.appendChild(d);
@@ -1677,7 +1897,7 @@ function renderHifzSurahs(){
 async function startSabaq(n){
   const key='s'+n+'.'+settings.reciter;
   go('memorize');
-  document.getElementById('memAr').textContent='Loading… ⏳';
+  document.getElementById('memAr').textContent=T('loading');
   let data=cacheGet(key);
   if(!data){
     try{
@@ -1686,7 +1906,7 @@ async function startSabaq(n){
       data={ number:text.number, name:text.name, englishName:text.englishName,
              ayahs:text.ayahs.map((a,i)=>({n:a.numberInSurah,text:a.text,audio:(aud.ayahs[i]||{}).audio})) };
       cacheSet(key,data);
-    }catch(e){ document.getElementById('memAr').textContent='Load nahi hua 😕'; return; }
+    }catch(e){ document.getElementById('memAr').textContent=T('loadFail'); return; }
   }
   hz.mode='sabaq'; hz.surahName=data.englishName;
   hz.list=data.ayahs.map(a=>({key:n+':'+a.n, text:a.text, audio:a.audio, label:data.englishName+' '+a.n}));
@@ -1701,8 +1921,8 @@ function startReview(mode){
     const age=now-(H[k].last||0);
     return mode==='sabqi' ? age<=7*DAY : age>7*DAY;
   });
-  if(!keys.length){ alertBox(mode==='sabqi'?'Sabqi khali hai':'Manzil khali hai','Pehle Sabaq se kuch ayat yaad karein.'); return; }
-  hz.mode=mode; hz.surahName=(mode==='sabqi'?'Sabqi 🔁':'Manzil 📚');
+  if(!keys.length){ alertBox(T('emptyList',{m: mode==='sabqi'?T('sabqi'):T('manzil')}), T('emptySub')); return; }
+  hz.mode=mode; hz.surahName=(mode==='sabqi'?T('sabqi')+' 🔁':T('manzil')+' 📚');
   hz.list=keys.map(k=>({key:k, text:H[k].text||'', audio:H[k].audio||'', label:(H[k].label||k)}));
   hz.index=0; hz.hidden=true;
   go('memorize'); renderMem();
@@ -1718,10 +1938,10 @@ function renderMem(){
   const ar=document.getElementById('memAr');
   ar.textContent = a.text || '—';
   ar.classList.toggle('hidden-text', hz.hidden);
-  document.getElementById('memTap').textContent = hz.hidden ? '👆 Zubani parho, phir tap karke check karo' : '✓ Ab dekh kar milao';
-  document.getElementById('mHideBtn').textContent = hz.hidden ? '👁 Dekho' : '🙈 Hide';
+  document.getElementById('memTap').textContent = hz.hidden ? T('hideRecall') : T('nowCompare');
+  document.getElementById('mHideBtn').textContent = hz.hidden ? T('showBtn') : T('hideBtn');
   document.getElementById('memAyah').classList.toggle('known', !!(H[a.key]&&H[a.key].known));
-  document.getElementById('mRepBtn').textContent = 'Repeat: '+hz.repeat+'x';
+  document.getElementById('mRepBtn').textContent = T('rRepeat',{v:hz.repeat});
 }
 function toggleHide(){ hz.hidden=!hz.hidden; renderMem(); }
 function cycleMemRepeat(){ hz.repeat = hz.repeat===5?10 : hz.repeat===10?20 : 5; renderMem(); }
@@ -1759,7 +1979,7 @@ function memPrev(){
 function finishHifz(){
   const H=hifzData();
   const done=hz.list.filter(a=>H[a.key]&&H[a.key].known).length;
-  showReward('MashaAllah! 🌟', done+' / '+hz.list.length+' ayat yaad', 'hifz');
+  showReward(T('mashaAllah'), done+' / '+hz.list.length+' '+T('ayatMemo'), 'hifz');
 }
 
 /* ============================================================
@@ -1785,7 +2005,7 @@ function openDua(i){
 }
 function renderDua(){
   const d=DUAS[dua.index];
-  const lang=(currentProfile()?.lang)||'ur';
+  const lang=UI_LANG;
   document.getElementById('dTitle').textContent=langText(d.title);
   document.getElementById('dCount').textContent=(dua.index+1)+' / '+DUAS.length;
   document.getElementById('dStage').innerHTML=`
@@ -1793,10 +2013,10 @@ function renderDua(){
     <div style="font-size:44px">${d.icon}</div>
     <div class="big-phrase arabic">${d.arabic}</div>
     <div class="letter-name" style="font-size:.95rem;color:var(--ink-soft)">${escapeHtml(d.tr)}</div>
-    <div class="mnemonic"><span class="mtext ${lang==='ur'?'urdu':''}">${escapeHtml(langText(d.mean))}</span></div>
-    <div class="tap-hint">Tap karke suno 🔊</div>`;
+    <div class="mnemonic"><span class="mtext ${fontCls()}">${escapeHtml(langText(d.mean))}</span></div>
+    <div class="tap-hint">${T('tapHear')}</div>`;
   document.getElementById('dPrev').disabled=dua.index===0;
-  document.getElementById('dNext').textContent=(dua.index===DUAS.length-1)?'Finish 🎉':'Next ›';
+  document.getElementById('dNext').textContent=(dua.index===DUAS.length-1)?T('finish'):T('next');
   // mark as seen
   const p=currentProfile();
   if(p){ p.duasDone=p.duasDone||{}; p.duasDone[d.id]=true; save(); }
@@ -1805,7 +2025,7 @@ function renderDua(){
 function playDua(){ const d=DUAS[dua.index]; sayIt(d.arabic, d.audio); }
 function duaNext(){
   if(dua.index<DUAS.length-1){ dua.index++; renderDua(); }
-  else showReward('MashaAllah! 🌟','Saari duain complete!','menu');
+  else showReward(T('mashaAllah'), T('allDuasDone'), 'menu');
 }
 function duaPrev(){ if(dua.index>0){ dua.index--; renderDua(); } }
 
@@ -1814,7 +2034,7 @@ let sl={index:0};
 function openSalah(){ sl.index=0; go('salah'); renderSalah(); }
 function renderSalah(){
   const s=SALAH_STEPS[sl.index];
-  const lang=(currentProfile()?.lang)||'ur';
+  const lang=UI_LANG;
   document.getElementById('slCount').textContent=(sl.index+1)+' / '+SALAH_STEPS.length;
   const dots=document.getElementById('slDots'); dots.innerHTML='';
   SALAH_STEPS.forEach((_,i)=>{ const d=document.createElement('div');
@@ -1824,9 +2044,9 @@ function renderSalah(){
     <div style="font-size:52px">${s.icon}</div>
     <div class="letter-name" style="font-size:1.3rem">${escapeHtml(langText(s.title))}</div>
     ${s.arabic?`<div class="big-phrase arabic" style="font-size:2.2rem">${s.arabic}</div>`:''}
-    <div class="mnemonic"><span class="mtext ${lang==='ur'?'urdu':''}">${escapeHtml(langText(s.say))}</span></div>`;
+    <div class="mnemonic"><span class="mtext ${fontCls()}">${escapeHtml(langText(s.say))}</span></div>`;
   document.getElementById('slPrev').disabled=sl.index===0;
-  document.getElementById('slNext').textContent=(sl.index===SALAH_STEPS.length-1)?'Finish 🎉':'Next ›';
+  document.getElementById('slNext').textContent=(sl.index===SALAH_STEPS.length-1)?T('finish'):T('next');
   if(s.arabic) setTimeout(playSalah,250);
 }
 function playSalah(){ const s=SALAH_STEPS[sl.index]; if(s.arabic) sayIt(s.arabic, s.audio); }
@@ -1835,7 +2055,7 @@ function salahNext(){
   else{
     const p=currentProfile();
     if(p){ p.progress=p.progress||{}; p.progress['salah']=true; save(); }
-    showReward('MashaAllah! 🌟','Namaz ke saare steps seekh liye!','menu');
+    showReward(T('mashaAllah'), T('salahDone'), 'menu');
   }
 }
 function salahPrev(){ if(sl.index>0){ sl.index--; renderSalah(); } }
@@ -1858,9 +2078,9 @@ function openProgress(){
 
   const rows=[
     ...QAIDA_CONFIG.lessons.map(L=>({t:langText(L.title), ic:L.icon||'📖', done:!!prog[L.id]})),
-    {t:'Sawal-Jawab', ic:'❓', done:!!prog.quiz},
-    {t:'Huroof Hunt game', ic:'🎈', done:!!prog.game},
-    {t:'Namaz seekhi', ic:'🕌', done:!!prog.salah}
+    {t:T('quizName'), ic:'❓', done:!!prog.quiz},
+    {t:T('gameName'), ic:'🎈', done:!!prog.game},
+    {t:T('salahLearned'), ic:'🕌', done:!!prog.salah}
   ];
 
   document.getElementById('progBody').innerHTML=`
@@ -1868,16 +2088,16 @@ function openProgress(){
       <div class="ph-star">⭐ ${stars}</div>
       <div class="ph-name">${escapeHtml(p.name)}</div>
       <div class="ph-bar"><div class="ph-fill" style="width:${pct}%"></div></div>
-      <div class="ph-sub">Qaida: ${lessonsDone} / ${totalLessons} lessons (${pct}%)</div>
+      <div class="ph-sub">${T('qaida')}: ${lessonsDone} / ${totalLessons} ${T('lessons')} (${pct}%)</div>
     </div>
 
     <div class="prog-cards">
-      <div class="pc"><b>${hifzKnown}</b><span>Ayat yaad 🧠</span></div>
-      <div class="pc"><b>${duasSeen}/${DUAS.length}</b><span>Duain 🤲</span></div>
-      <div class="pc"><b>${p.lastRead?('S'+p.lastRead.surah):'—'}</b><span>Last read 📖</span></div>
+      <div class="pc"><b>${hifzKnown}</b><span>${T('ayatMemo')} 🧠</span></div>
+      <div class="pc"><b>${duasSeen}/${DUAS.length}</b><span>${T('duasCard')}</span></div>
+      <div class="pc"><b>${p.lastRead?('S'+p.lastRead.surah):'—'}</b><span>${T('lastRead')}</span></div>
     </div>
 
-    <div class="section-head">Milestones</div>
+    <div class="section-head">${T('milestones')}</div>
     ${rows.map(r=>`<div class="prog-row ${r.done?'done':''}">
         <div class="pr-ic">${r.ic}</div>
         <div class="pr-t">${escapeHtml(r.t)}</div>
@@ -1897,32 +2117,32 @@ function openLink(){
   if(!SYNC_ON){
     body.innerHTML=`<div class="card" style="text-align:center;padding:26px">
       <div style="font-size:44px">🔧</div>
-      <div style="font-weight:800;margin-top:8px">Sync abhi setup nahi hai</div>
+      <div style="font-weight:800;margin-top:8px">${T('syncOff')}</div>
       <div style="color:var(--ink-soft);font-weight:600;font-size:.88rem;margin-top:6px">
-        App ke code mein Supabase URL aur key daalein.</div></div>`;
+        ${T('syncOffSub')}</div></div>`;
     go('link'); return;
   }
   if(p.linked){
     body.innerHTML=`
       <div class="prog-hero">
         <div class="ph-star">✅</div>
-        <div class="ph-name">${escapeHtml(p.linked.teacherName||'Ustad')} se juda hua</div>
-        <div class="ph-sub">Student: ${escapeHtml(p.linked.name)}</div>
+        <div class="ph-name">${T('linkedTo',{t:escapeHtml(p.linked.teacherName||T('teacher'))})}</div>
+        <div class="ph-sub">${T('student')}: ${escapeHtml(p.linked.name)}</div>
       </div>
       <div class="card" style="text-align:center;color:var(--ink-soft);font-weight:700;font-size:.88rem">
-        Aap ka progress khud-ba-khud teacher ko pohanchta rehta hai 🌙</div>
-      <button class="btn gold block" style="margin-top:12px" onclick="syncNow()">🔄 Abhi sync karo</button>
-      <button class="btn ghost block" style="margin-top:10px" onclick="unlinkTeacher()">Unlink</button>`;
+        ${T('linkedNote')}</div>
+      <button class="btn gold block" style="margin-top:12px" onclick="syncNow()">${T('syncNow')}</button>
+      <button class="btn ghost block" style="margin-top:10px" onclick="unlinkTeacher()">${T('unlink')}</button>`;
   } else {
     body.innerHTML=`
       <div class="card" style="text-align:center;padding:22px 16px">
         <div style="font-size:44px">🔗</div>
-        <div style="font-weight:800;margin-top:6px">Teacher se judein</div>
+        <div style="font-weight:800;margin-top:6px">${T('joinTeacher')}</div>
         <div style="color:var(--ink-soft);font-weight:600;font-size:.88rem;margin:6px 0 14px">
-          Ustad se apna <b>join code</b> lein aur yahan daalein.</div>
+          ${T('joinSub')}</div>
         <input class="search" id="codeInput" placeholder="e.g. WASAY-4821"
           style="text-align:center;font-weight:800;letter-spacing:2px;text-transform:uppercase"/>
-        <button class="btn block" onclick="doLink()">Join ✓</button>
+        <button class="btn block" onclick="doLink()">${T('joinBtn')}</button>
         <div id="linkErr" style="color:var(--coral);font-weight:700;font-size:.85rem;margin-top:10px"></div>
       </div>`;
   }
@@ -1931,22 +2151,22 @@ function openLink(){
 async function doLink(){
   const code=(document.getElementById('codeInput').value||'').trim().toUpperCase();
   const err=document.getElementById('linkErr');
-  if(!code){ err.textContent='Code daalein.'; return; }
-  err.textContent='Check kar rahe hain… ⏳';
+  if(!code){ err.textContent=T('enterCode'); return; }
+  err.textContent=T('checking');
   try{
     const {data,error}=await sb.from('students').select('id,name,level,teacher_id').eq('join_code',code).maybeSingle();
     if(error) throw error;
-    if(!data){ err.textContent='Ye code nahi mila. Dobara check karein.'; return; }
+    if(!data){ err.textContent=T('codeBad'); return; }
     const p=currentProfile();
     p.linked={ studentId:data.id, name:data.name, level:data.level };
     save();
     await syncNow(true);
     openLink();
     confetti(true);
-  }catch(e){ err.textContent='Internet ya code ka masla hai.'; }
+  }catch(e){ err.textContent=T('codeErr'); }
 }
 function unlinkTeacher(){
-  askConfirm('Teacher se unlink karein?\nProgress phone par mehfooz rahega.', ()=>{
+  askConfirm(T('unlinkAsk'), ()=>{
     const p=currentProfile(); if(p){ delete p.linked; save(); }
     openLink();
   });
@@ -1971,8 +2191,8 @@ async function syncNow(quiet){
       stars,
       updated_at:new Date().toISOString()
     },{onConflict:'student_id'});
-    if(!quiet) alertBox('Sync ho gaya ✅','Teacher ko aap ka progress mil gaya.');
-  }catch(e){ if(!quiet) alertBox('Sync nahi hua 😕','Internet check karein.'); }
+    if(!quiet) alertBox(T('syncOk'), T('syncOkSub'));
+  }catch(e){ if(!quiet) alertBox(T('syncFail'), T('syncFailSub')); }
 }
 
 /* auto-sync whenever progress is saved */
@@ -1986,10 +2206,12 @@ save = function(){
 /* ============================================================
    7. HELPERS
    ============================================================ */
+function fontCls(){ return UI_LANG==='ur' ? 'urdu' : (UI_LANG==='ar' ? 'arabicui' : ''); }
 function langText(obj){
-  const lang = (currentProfile()?.lang)||'ur';
   if(typeof obj==='string') return obj;
-  return obj[lang] || obj.en || obj.ur || '';
+  if(!obj) return '';
+  // follow the UI language; fall back gracefully
+  return obj[UI_LANG] || obj.en || obj.ur || obj.ar || '';
 }
 function escapeHtml(str){ return (str+'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 
@@ -2033,6 +2255,7 @@ function confetti(big){
 /* ============================================================
    8. BOOT
    ============================================================ */
+setLang(UI_LANG);     // apply saved language (default English)
 go('splash');
 
 /* ---- PWA: service worker + install prompt ---- */
