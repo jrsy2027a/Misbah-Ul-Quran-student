@@ -1,6 +1,6 @@
 /* Misbah-ul-Quran — service worker
    Bump CACHE version whenever you update the app so users get the new build. */
-const CACHE = 'misbah-v9';
+const CACHE = 'misbah-v12';
 
 const SHELL = [
   './',
